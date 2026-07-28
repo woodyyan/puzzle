@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#f7f4ef">
+<title>拼图闯关</title>
+<style>
+  :root{
+    --bg:#f7f4ef; --panel:#ffffff; --ink:#2c2c2a; --muted:#7a776f;
+    --line:rgba(0,0,0,.10); --accent:#d85a30; --accent2:#1d9e75; --gold:#e8a53c;
+    --seam:#e6e0d6;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    min-height:100dvh; overscroll-behavior:none;
+  }
+  .app{
+    width:100%; max-width:480px; height:100dvh; margin:0 auto;
+    display:flex; flex-direction:column; overflow:hidden;
+    padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom);
+  }
+  .screen{flex:1 1 auto; display:none; flex-direction:column; min-height:0}
+  .screen.active{display:flex}
+
+  /* ---------- Home ---------- */
+  #home{align-items:center; justify-content:center; gap:22px; text-align:center}
+  .logo{font-size:30px; font-weight:700; letter-spacing:2px}
+  .logo small{display:block; font-size:13px; font-weight:400; color:var(--muted); letter-spacing:4px; margin-top:8px}
+  .btn{
+    border:none; border-radius:14px; padding:14px 26px; font-size:16px; font-weight:600;
+    background:var(--accent); color:#fff; cursor:pointer; transition:transform .08s, opacity .2s;
+    box-shadow:0 4px 14px rgba(216,90,48,.28);
+  }
+  .btn:active{transform:scale(.96)}
+  .btn.ghost{background:var(--panel); color:var(--ink); box-shadow:none; border:1px solid var(--line); font-weight:500}
+  .home-actions{display:flex; flex-direction:column; gap:12px; width:200px}
+
+  /* ---------- Level select ---------- */
+  #select{padding-top:8px}
+  .topbar{display:flex; align-items:center; gap:10px; padding:8px 2px 14px; flex:0 0 auto}
+  .topbar h2{font-size:17px; margin:0; font-weight:600; flex:1}
+  .iconbtn{border:1px solid var(--line); background:var(--panel); border-radius:10px; width:38px; height:38px; font-size:16px; cursor:pointer; color:var(--ink); flex:0 0 auto}
+  .iconbtn.muted{opacity:.4; color:var(--muted)}
+  .levels{flex:1 1 auto; overflow-y:auto; display:grid; grid-template-columns:repeat(4,1fr); gap:10px; padding:2px 2px 20px; align-content:start; min-height:0}
+  .lvcell{
+    aspect-ratio:1; border-radius:14px; border:1px solid var(--line); background:var(--panel);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+    font-size:18px; font-weight:600; cursor:pointer; position:relative; overflow:hidden;
+  }
+  .lvcell .grid{font-size:10px; color:var(--muted); font-weight:400}
+  .lvcell.locked{opacity:.4}
+  .lvcell.done{border-color:var(--accent2)}
+  .lvcell .stars{font-size:9px; color:var(--gold); letter-spacing:1px; height:11px}
+
+  /* ---------- Game ---------- */
+  #game{padding-top:8px}
+  .hud{display:flex; align-items:stretch; gap:8px; padding:4px 2px 10px; flex:0 0 auto}
+  .hud .stat{flex:1 1 0; min-width:0; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:6px 4px; font-size:12px; color:var(--muted); text-align:center; display:flex; flex-direction:column; justify-content:center}
+  .hud .stat b{display:block; color:var(--ink); font-size:15px; font-weight:600; margin-top:1px}
+  .hud .spacer{flex:1 1 auto; min-width:6px}
+  .boardwrap{flex:1 1 auto; display:flex; align-items:center; justify-content:center; min-height:0; overflow:hidden; padding:2px 0}
+  .board{
+    position:relative; width:100%; max-width:100%; max-height:100%;
+    display:grid; gap:0; background:var(--seam); border-radius:12px;
+    touch-action:none; user-select:none; overflow:hidden;
+  }
+  .piece{
+    position:relative; background:var(--seam); cursor:grab;
+    touch-action:none; user-select:none;
+  }
+  .piece.lifting{z-index:30}
+  .piece .face{
+    position:absolute; left:0; top:0; right:0; bottom:0;
+    background-repeat:no-repeat; border-radius:0;
+    touch-action:none; user-select:none;
+  }
+  /* 缝：覆盖在碎片上层的“描边”遮罩，只遮挡图像边缘、不裁剪内容；
+     合并（同组）时该侧不画遮罩 -> 两块严丝合缝、图像完整对齐 */
+  .piece .seam{
+    position:absolute; left:0; top:0; right:0; bottom:0;
+    pointer-events:none; border-radius:0;
+  }
+  .piece.lifting{transform:scale(1.03)}
+  .piece.lifting .face{box-shadow:0 10px 26px rgba(0,0,0,.32)}
+  .piece.hint .face{outline:3px solid var(--accent2); outline-offset:-3px; z-index:5}
+
+  .footer{display:flex; gap:8px; padding:10px 2px calc(10px + env(safe-area-inset-bottom)); flex:0 0 auto}
+  .footer .btn{flex:1 1 0; min-width:0; padding:13px 0; font-size:15px}
+
+  /* peek + win overlay */
+  .overlay{position:fixed; inset:0; background:rgba(20,18,16,.7); display:none; align-items:center; justify-content:center; z-index:100; padding:24px}
+  .overlay.active{display:flex}
+  .peekimg{max-width:88%; max-height:80%; border-radius:14px; box-shadow:0 10px 40px rgba(0,0,0,.5)}
+  .card{background:var(--panel); border-radius:20px; padding:28px 26px; text-align:center; width:100%; max-width:320px}
+  .card h3{margin:0 0 6px; font-size:22px}
+  .card .bigstars{font-size:30px; color:var(--gold); letter-spacing:4px; margin:10px 0}
+  .card p{color:var(--muted); font-size:14px; margin:6px 0 20px}
+  .card .row{display:flex; gap:10px}
+  .card .row .btn{flex:1; padding:13px 0; font-size:15px}
+  .hidden-preload{position:absolute; width:0; height:0; overflow:hidden}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Home -->
+  <section id="home" class="screen active">
+    <div class="logo">拼图闯关<small>PUZZLE JOURNEY</small></div>
+    <div class="home-actions">
+      <button class="btn" id="btnContinue">继续游戏</button>
+      <button class="btn ghost" id="btnSelect">选择关卡</button>
+      <button class="btn ghost" id="btnReset">重置进度</button>
+    </div>
+    <p style="color:var(--muted);font-size:12px;max-width:260px;line-height:1.7">两块只要「拼对」（彼此相邻且原图本就相邻）就会自动合并成无缝整体，可整块拖动。拖到别处→整组与那里对调；拖到一个大合并块上→会把大块打碎。碎片按原图比例裁切，长图也能玩。</p>
+  </section>
+
+  <!-- Level select -->
+  <section id="select" class="screen">
+    <div class="topbar">
+      <button class="iconbtn" id="selBack">‹</button>
+      <h2>选择关卡</h2>
+    </div>
+    <div class="levels" id="levelGrid"></div>
+  </section>
+
+  <!-- Game -->
+  <section id="game" class="screen">
+    <div class="hud">
+      <div class="stat">关卡<b id="hudLevel">1</b></div>
+      <div class="stat">步数<b id="hudMoves">0</b></div>
+      <div class="stat">用时<b id="hudTime">0:00</b></div>
+      <div class="spacer"></div>
+      <button class="iconbtn" id="btnSound" title="音效开关">音</button>
+      <button class="iconbtn" id="gameBack">‹</button>
+    </div>
+    <div class="boardwrap"><div class="board" id="board"></div></div>
+    <div class="footer">
+      <button class="btn ghost" id="btnPeek">看原图</button>
+      <button class="btn ghost" id="btnHint">提示</button>
+      <button class="btn ghost" id="btnRestart">重排</button>
+    </div>
+  </section>
+
+</div>
+
+<div class="overlay" id="peekOverlay"><img class="peekimg" id="peekImg" alt="原图"></div>
+<div class="overlay" id="winOverlay">
+  <div class="card">
+    <h3>过关！</h3>
+    <div class="bigstars" id="winStars">★★★</div>
+    <p id="winInfo"></p>
+    <div class="row">
+      <button class="btn ghost" id="winReplay">再玩一次</button>
+      <button class="btn" id="winNext">下一关</button>
+    </div>
+  </div>
+</div>
+
+<div class="hidden-preload" id="preload"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- 素材与关卡配置 ----------
+  // ---------- 关卡内容：由 manifest.json 驱动（部署后只改清单即可加图/加关） ----------
+  // 内置兜底清单：即使直接双击打开（file:// 下 fetch 受限）也能玩；部署到 Vercel 后
+  // 以仓库里的 manifest.json 为准。添加关卡 = 往 images/ 丢图 + 在 manifest.json 加一行。
+  var FALLBACK_LEVELS = [
+    {img:"images/puzzle1.png",c:7,r:7,title:"樱花小屋"},
+    {img:"images/puzzle2.png",c:7,r:8,title:"星夜萤湖"},
+    {img:"images/puzzle3.png",c:7,r:9,title:"秋林小径"},
+    {img:"images/puzzle4.png",c:8,r:10,title:"海边日落"},
+    {img:"images/puzzle5.png",c:8,r:11,title:"雪山温泉"},
+    {img:"images/puzzle1.png",c:9,r:12,title:"樱花小屋 · 进阶"},
+    {img:"images/puzzle2.png",c:7,r:7,title:"星夜萤湖 · 进阶"},
+    {img:"images/puzzle3.png",c:7,r:8,title:"秋林小径 · 进阶"},
+    {img:"images/puzzle4.png",c:7,r:9,title:"海边日落 · 进阶"},
+    {img:"images/puzzle5.png",c:8,r:10,title:"雪山温泉 · 进阶"},
+    {img:"images/puzzle1.png",c:8,r:11,title:"樱花小屋 · 挑战"},
+    {img:"images/puzzle2.png",c:9,r:12,title:"星夜萤湖 · 挑战"},
+    {img:"images/puzzle3.png",c:7,r:7,title:"秋林小径 · 挑战"},
+    {img:"images/puzzle4.png",c:7,r:8,title:"海边日落 · 挑战"},
+    {img:"images/puzzle5.png",c:7,r:9,title:"雪山温泉 · 挑战"}
+  ];
+  var LEVELS = FALLBACK_LEVELS.slice();
+  var TOTAL_LEVELS = LEVELS.length;
+  // 部署到 Vercel 后读取真实 manifest.json；读取失败（如 file://）则保留兜底清单
+  function loadManifest(){
+    return fetch("manifest.json").then(function(r){ if(!r.ok) throw 0; return r.json(); })
+      .then(function(m){ if(m && m.levels && m.levels.length){ LEVELS=m.levels; TOTAL_LEVELS=LEVELS.length; } })
+      .catch(function(){ /* 保持兜底清单 */ });
+  }
+
+  // 合并后的缝隙宽度（px）。组内为 0，组间为 S。
+  var SEAM = 2;
+  var SEAM_COLOR = "#e6e0d6"; // 与 --seam 一致，用于缝遮罩
+
+  // ---------- 音效（Web Audio API 实时合成，无需任何外部音频文件） ----------
+  // 直接利用浏览器发声，单文件、可离线、零资源；首次在用户手势内解锁（iOS 要求）。
+  var Sound = (function(){
+    var ctx=null, muted=false;
+    function ensure(){
+      if(!ctx){
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if(!AC) return null;
+        try{ ctx=new AC(); }catch(e){ return null; }
+      }
+      if(ctx.state==="suspended") ctx.resume();
+      return ctx;
+    }
+    // 单个音：振荡器 + 增益包络（快速起音、指数衰减，避免爆音）
+    function blip(opt){
+      if(muted) return;
+      var ac=ensure(); if(!ac) return;
+      var t=ac.currentTime;
+      var d=opt.d||0.1, v=opt.v==null?0.14:opt.v;
+      var o=ac.createOscillator(), g=ac.createGain();
+      o.type=opt.type||"sine";
+      o.frequency.setValueAtTime(opt.f0, t);
+      if(opt.f1) o.frequency.exponentialRampToValueAtTime(opt.f1, t+d);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(v, t+0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001, t+d);
+      o.connect(g); g.connect(ac.destination);
+      o.start(t); o.stop(t+d+0.03);
+    }
+    return {
+      unlock:function(){ ensure(); },
+      setMuted:function(m){ muted=!!m; },
+      isMuted:function(){ return muted; },
+      // 开始拖动：柔和上滑“呜”
+      pickup:function(){ blip({type:"sine", f0:480, f1:680, d:0.10, v:0.09}); },
+      // 松手：“哒”（短促下行）
+      drop:function(){ blip({type:"triangle", f0:320, f1:150, d:0.07, v:0.16}); },
+      // 合并成功：“叮”（清脆双音，快速衰减）
+      merge:function(){
+        blip({type:"sine", f0:1046.5, d:0.20, v:0.16});
+        blip({type:"sine", f0:1568.0, d:0.16, v:0.09});
+      },
+      // 过关：上行小琶音（附加，不喜欢可删）
+      win:function(){
+        var notes=[523.25,659.25,783.99,1046.5];
+        notes.forEach(function(f,i){ setTimeout(function(){ blip({type:"sine", f0:f, d:0.18, v:0.14}); }, i*90); });
+      }
+    };
+  })();
+
+  // ---------- 进度存储 ----------
+  var SKEY = "puzzle_progress_v1";
+  function loadProgress(){
+    try{ return JSON.parse(localStorage.getItem(SKEY)) || {unlocked:1, stars:{}}; }
+    catch(e){ return {unlocked:1, stars:{}}; }
+  }
+  function saveProgress(p){ try{ localStorage.setItem(SKEY, JSON.stringify(p)); }catch(e){} }
+  var progress = loadProgress();
+
+  // ---------- 元素 ----------
+  var $=function(id){return document.getElementById(id);};
+  var boardEl = $("board");
+  var screens={home:$("home"),select:$("select"),game:$("game")};
+  function show(name){ for(var k in screens){ screens[k].classList.toggle("active",k===name);} }
+
+  // ---------- 游戏状态 ----------
+  var cur={lv:1,c:3,r:3,n:9,slots:[],moves:0,t0:0,timer:null,img:"",
+           groups:[],groupId:[],cellW:0,cellH:0};
+
+  function rcOf(pos){ return {row:Math.floor(pos/cur.c), col:pos%cur.c}; }
+  function posOf(row,col){ return row*cur.c+col; }
+
+  function shuffle(a){
+    for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
+    return a;
+  }
+  function isSolved(s){ for(var i=0;i<s.length;i++){ if(s[i]!==i) return false;} return true; }
+
+  function startLevel(lv){
+    if(lv<1) lv=1; if(lv>TOTAL_LEVELS) lv=TOTAL_LEVELS;
+    cur.lv=lv;
+    var L=LEVELS[lv-1];
+    var g={c:L.c,r:L.r};
+    cur.c=g.c; cur.r=g.r; cur.n=g.c*g.r; cur.img=L.img;
+    var order=[]; for(var i=0;i<cur.n;i++) order.push(i);
+    do{ shuffle(order); }while(isSolved(order));
+    cur.slots=order; cur.moves=0;
+    $("hudLevel").textContent=lv;
+    $("hudMoves").textContent=0;
+    $("peekImg").src=cur.img;
+    startTimer();
+    show("game");      // 先显示，棋盘才有实际尺寸
+    buildBoard();
+  }
+
+  function startTimer(){
+    cur.t0=Date.now();
+    if(cur.timer) clearInterval(cur.timer);
+    cur.timer=setInterval(updTime,1000); updTime();
+  }
+  function updTime(){
+    var s=Math.floor((Date.now()-cur.t0)/1000);
+    var m=Math.floor(s/60); s=s%60;
+    $("hudTime").textContent=m+":"+(s<10?"0":"")+s;
+  }
+
+  function buildBoard(){
+    boardEl.style.gridTemplateColumns="repeat("+cur.c+",1fr)";
+    boardEl.style.gridTemplateRows="repeat("+cur.r+",1fr)";
+    render();
+  }
+
+  // 让棋盘按“图片真实比例”缩放并完整放入可用区域（碎片按比例裁切，非正方形）
+  function fitBoard(){
+    var wrap=boardEl.parentElement; // .boardwrap
+    var wrapW=wrap.clientWidth, wrapH=wrap.clientHeight;
+    if(wrapW===0||wrapH===0) return false;
+    var d=IMG_DIMS[cur.img];
+    var imgA = d ? (d.w/d.h) : (cur.c/cur.r);
+    var bw=wrapW, bh=bw/imgA;
+    if(bh>wrapH){ bh=wrapH; bw=bh*imgA; }
+    boardEl.style.width=bw+"px";
+    boardEl.style.height=bh+"px";
+    return true;
+  }
+
+  // ---------- 分组（合并）计算 ----------
+  // 关键：合并基于「相对正确性」——只要两块在棋盘上彼此相邻、且在原图中本就
+  // 是正确相邻的关系，就并入同一组（无论它们当前是否处于绝对正确位置）。
+  // 组内无缝、组间留缝；这样你把两块拼对（哪怕整块还不在最终位置）就会自动焊成无缝整体。
+  function joined(a,b){
+    // a、b 为正交相邻格子（索引差为 ±1 或 ±c），不跨行回绕
+    return cur.slots[b] === cur.slots[a] + (b - a);
+  }
+  function computeGroups(){
+    var groupId=new Array(cur.n).fill(-1);
+    var groups=[];
+    for(var p=0;p<cur.n;p++){
+      if(groupId[p]===-1){
+        var id=groups.length, comp=[], stack=[p];
+        groupId[p]=id;
+        while(stack.length){
+          var q=stack.pop(); comp.push(q);
+          var rc=rcOf(q);
+          var nb=[[rc.row-1,rc.col],[rc.row+1,rc.col],[rc.row,rc.col-1],[rc.row,rc.col+1]];
+          for(var k=0;k<4;k++){
+            var nr=nb[k][0], nc=nb[k][1];
+            if(nr<0||nr>=cur.r||nc<0||nc>=cur.c) continue;
+            var np=posOf(nr,nc);
+            if(groupId[np]===-1 && joined(q,np)){ groupId[np]=id; stack.push(np); }
+          }
+        }
+        groups.push(comp);
+      }
+    }
+    cur.groups=groups;
+    cur.groupId=groupId;
+  }
+
+  function render(){
+    if(!fitBoard()) return;            // 同时按图片比例设置棋盘像素尺寸
+    var boardW=boardEl.clientWidth, boardH=boardEl.clientHeight;
+    if(boardW===0||boardH===0) return;
+    cur.cellW=boardW/cur.c;
+    cur.cellH=boardH/cur.r;
+    computeGroups();
+
+    boardEl.innerHTML="";
+    for(var pos=0; pos<cur.n; pos++){
+      var pieceId=cur.slots[pos];       // 该位置实际放置的碎片（其正确编号）
+      var rc=rcOf(pieceId);             // 按碎片真实身份取对应图块切片
+      var grc=rcOf(pos);                // 网格坐标，用于判断相邻缝隙
+      var gid=cur.groupId[pos];
+      // 四条边的缝隙：越界或与不同组相邻 -> 有缝（基于网格拓扑）
+      var sTop = seamWith(grc.row-1,grc.col,gid);
+      var sBot = seamWith(grc.row+1,grc.col,gid);
+      var sLft = seamWith(grc.row,grc.col-1,gid);
+      var sRgt = seamWith(grc.row,grc.col+1,gid);
+
+      var piece=document.createElement("div");
+      piece.className="piece";
+      piece.dataset.pos=pos;
+
+      // 图像层：永远按完整切片渲染（绝不裁剪），保证合并后严丝合缝、对齐
+      var face=document.createElement("div");
+      face.className="face";
+      face.style.backgroundImage="url('"+cur.img+"')";
+      face.style.backgroundSize=boardW+"px "+boardH+"px";
+      face.style.backgroundPosition=(-rc.col*cur.cellW)+"px "+(-rc.row*cur.cellH)+"px";
+      piece.appendChild(face);
+
+      // 缝层：覆盖在图像之上的遮罩条；只在“有缝”的一侧画出 board 色条，合并时该侧不画 -> 无缝
+      var seam=document.createElement("div");
+      seam.className="seam";
+      var sh=[];
+      if(sTop) sh.push("inset 0 "+SEAM+"px 0 0 "+SEAM_COLOR);
+      if(sBot) sh.push("inset 0 -"+SEAM+"px 0 0 "+SEAM_COLOR);
+      if(sLft) sh.push("inset "+SEAM+"px 0 0 0 "+SEAM_COLOR);
+      if(sRgt) sh.push("inset -"+SEAM+"px 0 0 0 "+SEAM_COLOR);
+      if(sh.length) seam.style.boxShadow=sh.join(",");
+      piece.appendChild(seam);
+
+      attachDrag(piece);
+      boardEl.appendChild(piece);
+    }
+  }
+  function seamWith(nr,nc,gid){
+    if(nr<0||nr>=cur.r||nc<0||nc>=cur.c) return true; // 棋盘边缘
+    return cur.groupId[posOf(nr,nc)]!==gid;          // 不同组 -> 有缝
+  }
+
+  // ---------- 拖拽移动（整组一起） ----------
+  var drag=null;
+  function attachDrag(piece){
+    piece.addEventListener("pointerdown",function(e){
+      e.preventDefault();
+      Sound.unlock();                // 首次手势内解锁音频（iOS 必须）
+      var pos=parseInt(piece.dataset.pos,10);
+      var grp=cur.groups[cur.groupId[pos]];
+      grp.forEach(function(p){ boardEl.children[p].classList.add("lifting"); });
+      drag={grp:grp, startX:e.clientX, startY:e.clientY, moved:false};
+      window.addEventListener("pointermove",onMove);
+      window.addEventListener("pointerup",onUp);
+      Sound.pickup();               // 抓起：柔和“呜”
+    });
+  }
+  function onMove(e){
+    if(!drag) return;
+    e.preventDefault();
+    var dx=e.clientX-drag.startX, dy=e.clientY-drag.startY;
+    if(Math.abs(dx)>3||Math.abs(dy)>3) drag.moved=true;
+    drag.grp.forEach(function(p){
+      var el=boardEl.children[p];
+      el.style.transform="translate("+dx+"px,"+dy+"px) scale(1.03)";
+    });
+  }
+  function onUp(e){
+    if(!drag) return;
+    window.removeEventListener("pointermove",onMove);
+    window.removeEventListener("pointerup",onUp);
+    var dx=e.clientX-drag.startX, dy=e.clientY-drag.startY;
+    drag.grp.forEach(function(p){
+      var el=boardEl.children[p];
+      el.style.transform=""; el.classList.remove("lifting");
+    });
+    if(drag.moved){
+      var dCol=Math.round(dx/cur.cellW), dRow=Math.round(dy/cur.cellH);
+      var merged=tryMove(drag.grp, dCol, dRow);
+      if(merged===true)      Sound.merge();   // 合并成功：清脆“叮”
+      else if(merged===false) Sound.drop();   // 移动但无新合并：松手“哒”
+      // merged===undefined -> 越界放弃，归位，不发声
+    }else{
+      Sound.drop();                        // 拎起又放下（没移动）：轻“哒”
+    }
+    drag=null;
+  }
+  // 统计当前“已拼对”的相邻边数（用于判断合并/打碎是否发生）
+  function countJoined(){
+    var cnt=0;
+    for(var p=0;p<cur.n;p++){
+      var rc=rcOf(p);
+      if(rc.col<cur.c-1 && joined(p,p+1)) cnt++;
+      if(rc.row<cur.r-1 && joined(p,p+cur.c)) cnt++;
+    }
+    return cnt;
+  }
+  // 整组平移换位：把组 G 整体平移 (dCol,dRow)，把落点处被占的碎片整体换到 G 腾出的位置。
+  // 这是一个合法置换，并天然实现你想要的两种效果：
+  //  · 拖到另一处 -> 整组与那里的一组碎片互换位置；
+  //  · 拖到一个更大的合并块上 -> 那个大块被“打碎”（它的碎片被分散换走，合并解除）。
+  function tryMove(grp, dCol, dRow){
+    if(dCol===0 && dRow===0) return undefined;
+    var A=grp.slice();
+    var setA={}; A.forEach(function(p){ setA[p]=true; });
+    // 计算整组平移后的目标格子 B，并校验不越界
+    var B=[];
+    for(var i=0;i<A.length;i++){
+      var rc=rcOf(A[i]);
+      var nr=rc.row+dRow, nc=rc.col+dCol;
+      if(nr<0||nr>=cur.r||nc<0||nc>=cur.c) return undefined;   // 越界 -> 放弃本次移动，归位
+      B.push(posOf(nr,nc));
+    }
+    var setB={}; B.forEach(function(p){ setB[p]=true; });
+    var displaced = B.filter(function(p){ return !setA[p]; }); // 落点处被挤走的其他碎片
+    var vacated  = A.filter(function(p){ return !setB[p]; });  // G 腾出、等待接收的格子
+    if(displaced.length!==vacated.length) return undefined;    // 安全兜底
+    var before=countJoined();
+    var map={};
+    for(var i=0;i<A.length;i++) map[A[i]]=B[i];                  // G 整体平移
+    for(var i=0;i<displaced.length;i++) map[displaced[i]]=vacated[i]; // 被挤走的碎片填回腾出的格子
+    var old=cur.slots.slice();
+    var res=cur.slots.slice();
+    for(var from in map){ res[map[from]]=old[from]; }
+    cur.slots=res;
+    cur.moves++;
+    $("hudMoves").textContent=cur.moves;
+    render();                       // 重算分组 -> 相邻正确的碎片自动合并/打碎
+    var after=countJoined();
+    if(isSolved(cur.slots)) win();
+    return after>before;            // true=本次有新合并 -> 触发“叮”
+  }
+
+  // ---------- 提示 ----------
+  function hint(){
+    for(var pos=0; pos<cur.n; pos++){
+      if(cur.slots[pos]!==pos){
+        var targetPos=cur.slots.indexOf(pos);
+        var pieces=boardEl.children;
+        if(pieces[pos]) pieces[pos].classList.add("hint");
+        if(pieces[targetPos]) pieces[targetPos].classList.add("hint");
+        setTimeout(function(){
+          var hs=document.querySelectorAll(".piece.hint");
+          for(var i=0;i<hs.length;i++) hs[i].classList.remove("hint");
+        },1100);
+        break;
+      }
+    }
+  }
+
+  // ---------- 过关 ----------
+  function starsFor(moves,n){
+    if(moves<=n*1.5) return 3;
+    if(moves<=n*2.5) return 2;
+    return 1;
+  }
+  function win(){
+    clearInterval(cur.timer);
+    var st=starsFor(cur.moves,cur.n);
+    var prev=progress.stars[cur.lv]||0;
+    if(st>prev) progress.stars[cur.lv]=st;
+    if(cur.lv+1>progress.unlocked && cur.lv<TOTAL_LEVELS) progress.unlocked=cur.lv+1;
+    saveProgress(progress);
+    Sound.win();
+    $("winStars").textContent="★★★☆☆☆".substr(3-st,3);
+    $("winInfo").textContent="步数 "+cur.moves+" · 用时 "+$("hudTime").textContent;
+    $("winNext").style.display = cur.lv<TOTAL_LEVELS ? "" : "none";
+    $("winOverlay").classList.add("active");
+  }
+
+  // ---------- 关卡选择列表 ----------
+  function buildLevelGrid(){
+    var g=$("levelGrid"); g.innerHTML="";
+    for(var lv=1; lv<=TOTAL_LEVELS; lv++){
+      (function(lv){
+        var grid=LEVELS[lv-1];
+        var unlocked=lv<=progress.unlocked;
+        var st=progress.stars[lv]||0;
+        var cell=document.createElement("div");
+        cell.className="lvcell"+(unlocked?"":" locked")+(st>0?" done":"");
+        cell.innerHTML="<div>"+lv+"</div>"+
+                       "<div class='grid'>"+grid.c+"×"+grid.r+"</div>"+
+                       "<div class='grid' style='font-size:9px;max-width:92%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>"+(grid.title||"")+"</div>"+
+                       "<div class='stars'>"+(st>0?"★★★".substr(0,st):"")+"</div>";
+        if(unlocked) cell.addEventListener("click",function(){ startLevel(lv); });
+        g.appendChild(cell);
+      })(lv);
+    }
+  }
+
+  // ---------- 预加载图片并记录真实尺寸（用于按比例裁切） ----------
+  var IMG_DIMS={};
+  function preloadImages(){
+    LEVELS.forEach(function(L){
+      if(IMG_DIMS[L.img]) return;
+      var im=new Image();
+      im.onload=function(){
+        IMG_DIMS[L.img]={w:im.naturalWidth,h:im.naturalHeight};
+        if(screens.game.classList.contains("active") && cur.img===L.img) render();
+      };
+      im.src=L.img;
+    });
+  }
+
+  // ---------- 事件绑定 ----------
+  $("btnContinue").addEventListener("click",function(){ startLevel(progress.unlocked); });
+  $("btnSelect").addEventListener("click",function(){ buildLevelGrid(); show("select"); });
+  $("btnReset").addEventListener("click",function(){
+    if(confirm("确定重置所有进度？")){ progress={unlocked:1,stars:{}}; saveProgress(progress); alert("已重置"); }
+  });
+  $("selBack").addEventListener("click",function(){ show("home"); });
+  $("gameBack").addEventListener("click",function(){ clearInterval(cur.timer); buildLevelGrid(); show("select"); });
+  $("btnSound").addEventListener("click",function(){
+    var m=!Sound.isMuted();
+    Sound.setMuted(m);
+    this.textContent=m?"静":"音";
+    this.classList.toggle("muted",m);
+  });
+  $("btnRestart").addEventListener("click",function(){ startLevel(cur.lv); });
+  $("btnHint").addEventListener("click",hint);
+
+  // 看原图：按住显示
+  var peekEl=$("btnPeek"), peekOv=$("peekOverlay");
+  function peekOn(e){ e.preventDefault(); peekOv.classList.add("active"); }
+  function peekOff(){ peekOv.classList.remove("active"); }
+  peekEl.addEventListener("pointerdown",peekOn);
+  peekEl.addEventListener("pointerup",peekOff);
+  peekEl.addEventListener("pointerleave",peekOff);
+  peekOv.addEventListener("pointerup",peekOff);
+
+  $("winReplay").addEventListener("click",function(){ $("winOverlay").classList.remove("active"); startLevel(cur.lv); });
+  $("winNext").addEventListener("click",function(){ $("winOverlay").classList.remove("active"); startLevel(Math.min(cur.lv+1,TOTAL_LEVELS)); });
+
+  // 屏幕尺寸变化时重新计算切片与缝隙
+  var rzT;
+  window.addEventListener("resize",function(){
+    if(screens.game.classList.contains("active")){ clearTimeout(rzT); rzT=setTimeout(render,150); }
+  });
+
+  // 初始
+  show("home");
+  preloadImages();
+  loadManifest().then(function(){ if(screens.select.classList.contains("active")) buildLevelGrid(); });
+})();
+</script>
+</body>
+</html>

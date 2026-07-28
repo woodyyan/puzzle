@@ -1,0 +1,19 @@
+{
+  "levels": [
+    {"img":"images/puzzle1.png","c":7,"r":7,"title":"樱花小屋"},
+    {"img":"images/puzzle2.png","c":7,"r":8,"title":"星夜萤湖"},
+    {"img":"images/puzzle3.png","c":7,"r":9,"title":"秋林小径"},
+    {"img":"images/puzzle4.png","c":8,"r":10,"title":"海边日落"},
+    {"img":"images/puzzle5.png","c":8,"r":11,"title":"雪山温泉"},
+    {"img":"images/puzzle1.png","c":9,"r":12,"title":"樱花小屋 · 进阶"},
+    {"img":"images/puzzle2.png","c":7,"r":7,"title":"星夜萤湖 · 进阶"},
+    {"img":"images/puzzle3.png","c":7,"r":8,"title":"秋林小径 · 进阶"},
+    {"img":"images/puzzle4.png","c":7,"r":9,"title":"海边日落 · 进阶"},
+    {"img":"images/puzzle5.png","c":8,"r":10,"title":"雪山温泉 · 进阶"},
+    {"img":"images/puzzle1.png","c":8,"r":11,"title":"樱花小屋 · 挑战"},
+    {"img":"images/puzzle2.png","c":9,"r":12,"title":"星夜萤湖 · 挑战"},
+    {"img":"images/puzzle3.png","c":7,"r":7,"title":"秋林小径 · 挑战"},
+    {"img":"images/puzzle4.png","c":7,"r":8,"title":"海边日落 · 挑战"},
+    {"img":"images/puzzle5.png","c":7,"r":9,"title":"雪山温泉 · 挑战"}
+  ]
+}
