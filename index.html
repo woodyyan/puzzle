@@ -172,21 +172,26 @@
   // 内置兜底清单：即使直接双击打开（file:// 下 fetch 受限）也能玩；部署到 Vercel 后
   // 以仓库里的 manifest.json 为准。添加关卡 = 往 images/ 丢图 + 在 manifest.json 加一行。
   var FALLBACK_LEVELS = [
-    {img:"images/puzzle1.png",c:7,r:7,title:"樱花小屋"},
-    {img:"images/puzzle2.png",c:7,r:8,title:"星夜萤湖"},
-    {img:"images/puzzle3.png",c:7,r:9,title:"秋林小径"},
-    {img:"images/puzzle4.png",c:8,r:10,title:"海边日落"},
-    {img:"images/puzzle5.png",c:8,r:11,title:"雪山温泉"},
-    {img:"images/puzzle1.png",c:9,r:12,title:"樱花小屋 · 进阶"},
-    {img:"images/puzzle2.png",c:7,r:7,title:"星夜萤湖 · 进阶"},
-    {img:"images/puzzle3.png",c:7,r:8,title:"秋林小径 · 进阶"},
-    {img:"images/puzzle4.png",c:7,r:9,title:"海边日落 · 进阶"},
-    {img:"images/puzzle5.png",c:8,r:10,title:"雪山温泉 · 进阶"},
-    {img:"images/puzzle1.png",c:8,r:11,title:"樱花小屋 · 挑战"},
-    {img:"images/puzzle2.png",c:9,r:12,title:"星夜萤湖 · 挑战"},
-    {img:"images/puzzle3.png",c:7,r:7,title:"秋林小径 · 挑战"},
-    {img:"images/puzzle4.png",c:7,r:8,title:"海边日落 · 挑战"},
-    {img:"images/puzzle5.png",c:7,r:9,title:"雪山温泉 · 挑战"}
+    {img:"images/village1.png",c:7,r:7,title:"樱花村庄·红衣女孩"},
+    {img:"images/village2.png",c:7,r:7,title:"樱花村庄·花匠与狗"},
+    {img:"images/village3.png",c:7,r:7,title:"樱花村庄·放风筝"},
+    {img:"images/village4.png",c:7,r:8,title:"樱花村庄·撑伞少女"},
+    {img:"images/seaside1.png",c:7,r:8,title:"海边·堆沙堡"},
+    {img:"images/seaside2.png",c:7,r:8,title:"海边·渔夫与猫"},
+    {img:"images/seaside3.png",c:7,r:9,title:"海边·拾贝壳"},
+    {img:"images/seaside4.png",c:7,r:9,title:"海边·骑车家庭"},
+    {img:"images/forest1.png",c:7,r:9,title:"森林·松鼠与兔"},
+    {img:"images/forest2.png",c:8,r:10,title:"森林·廊下读书"},
+    {img:"images/forest3.png",c:8,r:10,title:"森林·熊崽与狐"},
+    {img:"images/lake1.png",c:8,r:10,title:"星空湖·营火"},
+    {img:"images/lake2.png",c:8,r:11,title:"星空湖·独木舟"},
+    {img:"images/lake3.png",c:8,r:11,title:"星空湖·观星"},
+    {img:"images/onsen1.png",c:8,r:11,title:"雪山温泉·小熊猫"},
+    {img:"images/onsen2.png",c:8,r:12,title:"雪山温泉·浴衣少女"},
+    {img:"images/onsen3.png",c:8,r:12,title:"雪山温泉·堆雪人"},
+    {img:"images/market1.png",c:8,r:12,title:"花园市集·花束"},
+    {img:"images/market2.png",c:9,r:12,title:"花园市集·气球"},
+    {img:"images/market3.png",c:9,r:12,title:"花园市集·园丁"}
   ];
   var LEVELS = FALLBACK_LEVELS.slice();
   var TOTAL_LEVELS = LEVELS.length;
@@ -332,8 +337,18 @@
   // 是正确相邻的关系，就并入同一组（无论它们当前是否处于绝对正确位置）。
   // 组内无缝、组间留缝；这样你把两块拼对（哪怕整块还不在最终位置）就会自动焊成无缝整体。
   function joined(a,b){
-    // a、b 为正交相邻格子（索引差为 ±1 或 ±c），不跨行回绕
-    return cur.slots[b] === cur.slots[a] + (b - a);
+    // a、b 为棋盘上正交相邻的格子；判断是否“在图里也正确相邻”。
+    // 关键：方向由【棋盘网格坐标】决定，且水平合并必须校验【碎片内容】的行列边界。
+    // 否则当“图片最右列碎片”与“下一行最左列碎片”在棋盘上水平相邻时，
+    // 会因 slots 恰为 ±1 被误判为已拼对（它们在图里其实是一上一下）。
+    var ra=rcOf(a), rb=rcOf(b);
+    var sa=cur.slots[a], sb=cur.slots[b];
+    var dr=rb.row-ra.row, dc=rb.col-ra.col;
+    if(dr===0 && dc===1)  return (sa % cur.c !== cur.c-1) && (sb === sa+1); // 右邻：a 不能在图片最右列
+    if(dr===0 && dc===-1) return (sa % cur.c !== 0)         && (sb === sa-1); // 左邻：a 不能在图片最左列
+    if(dr===1 && dc===0)  return sb === sa + cur.c;                          // 下邻
+    if(dr===-1 && dc===0) return sb === sa - cur.c;                          // 上邻
+    return false;
   }
   function computeGroups(){
     var groupId=new Array(cur.n).fill(-1);
