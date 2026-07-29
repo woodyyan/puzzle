@@ -117,16 +117,34 @@
   .footer .btn .e{font-size:17px; line-height:1}
   .footer .btn:active{transform:scale(.97)}
 
-  /* peek + win overlay */
-  .overlay{position:fixed; inset:0; background:rgba(20,18,16,.7); display:none; align-items:center; justify-content:center; z-index:100; padding:24px}
+  /* peek overlay（看原图：全屏遮罩） */
+  .overlay{position:fixed; inset:0; background:rgba(20,18,16,.82); display:none; align-items:center; justify-content:center; z-index:100; padding:24px}
   .overlay.active{display:flex}
   .peekimg{max-width:88%; max-height:80%; border-radius:14px; box-shadow:0 10px 40px rgba(0,0,0,.5)}
-  .card{background:var(--panel); border-radius:24px; padding:30px 26px; text-align:center; width:100%; max-width:320px; box-shadow:0 20px 50px rgba(60,40,20,.28)}
-  .card h3{margin:0 0 4px; font-size:24px; font-weight:800; background:linear-gradient(120deg,var(--accent-d),var(--gold)); -webkit-background-clip:text; background-clip:text; color:transparent}
-  .card .bigstars{font-size:34px; color:var(--gold); letter-spacing:4px; margin:12px 0; text-shadow:0 2px 6px rgba(240,178,74,.35)}
-  .card p{color:var(--muted); font-size:14px; margin:6px 0 22px}
-  .card .row{display:flex; gap:10px}
-  .card .row .btn{flex:1; padding:13px 0; font-size:15px}
+
+  /* 过关：底部 sheet + 透出完整拼图，可收起欣赏 */
+  .winOverlay{position:fixed; inset:0; z-index:100; display:none; align-items:flex-end; justify-content:center; padding:0}
+  .winOverlay.active{display:flex}
+  .winScrim{position:absolute; inset:0; background:linear-gradient(to bottom, rgba(12,10,8,0) 36%, rgba(12,10,8,.5) 100%); -webkit-tap-highlight-color:transparent}
+  .winNextFloat{position:absolute; left:50%; bottom:calc(20px + env(safe-area-inset-bottom)); transform:translateX(-50%); display:none;
+    border:none; border-radius:999px; padding:13px 30px; font-size:16px; font-weight:700; color:#fff;
+    background:linear-gradient(120deg,var(--accent),var(--accent-d)); box-shadow:0 8px 24px rgba(216,90,48,.42); cursor:pointer}
+  .winOverlay.collapsed .winNextFloat{display:block; animation:winPop .3s ease}
+  .winSheet{position:relative; width:100%; max-width:440px; box-sizing:border-box; margin:0 auto;
+    background:var(--panel); border-radius:26px 26px 0 0; padding:12px 22px calc(22px + env(safe-area-inset-bottom));
+    box-shadow:0 -12px 44px rgba(40,25,10,.32); text-align:center;
+    transform:translateY(0); transition:transform .34s cubic-bezier(.2,.85,.25,1)}
+  .winOverlay.collapsed .winSheet{transform:translateY(112%)}
+  .winCollapse{position:absolute; top:6px; left:50%; transform:translateX(-50%); width:48px; height:22px; border:none;
+    background:transparent; color:var(--muted); font-size:18px; line-height:1; cursor:pointer}
+  .winEmoji{font-size:30px; margin-top:14px; animation:winPop .42s ease}
+  .winSheet h3{margin:2px 0 4px; font-size:25px; font-weight:800; background:linear-gradient(120deg,var(--accent-d),var(--gold)); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .winSheet .bigstars{font-size:34px; color:var(--gold); letter-spacing:4px; margin:8px 0; text-shadow:0 2px 6px rgba(240,178,74,.35)}
+  .winSheet p{color:var(--muted); font-size:14px; margin:4px 0 18px}
+  .winMain{width:100%; padding:14px 0; font-size:16px; border-radius:16px}
+  .winSub{display:flex; gap:10px; margin-top:10px}
+  .winSub .btn{flex:1; padding:12px 0; font-size:14px; border-radius:16px}
+  @keyframes winPop{0%{transform:scale(.6); opacity:0} 100%{transform:scale(1); opacity:1}}
   .hidden-preload{position:absolute; width:0; height:0; overflow:hidden}
 </style>
 </head>
@@ -177,14 +195,19 @@
 </div>
 
 <div class="overlay" id="peekOverlay"><img class="peekimg" id="peekImg" alt="原图"></div>
-<div class="overlay" id="winOverlay">
-  <div class="card">
-    <h3>过关！</h3>
+<div class="winOverlay" id="winOverlay">
+  <div class="winScrim" id="winScrim"></div>
+  <button class="winNextFloat" id="winNextFloat">下一关 →</button>
+  <div class="winSheet">
+    <button class="winCollapse" id="winCollapse" aria-label="收起以欣赏图片">︾</button>
+    <div class="winEmoji">🎉</div>
+    <h3>过关啦！</h3>
     <div class="bigstars" id="winStars">★★★</div>
     <p id="winInfo"></p>
-    <div class="row">
+    <button class="btn winMain" id="winNext">下一关 →</button>
+    <div class="winSub">
       <button class="btn ghost" id="winReplay">再玩一次</button>
-      <button class="btn" id="winNext">下一关</button>
+      <button class="btn ghost" id="winSelect">选关</button>
     </div>
   </div>
 </div>
@@ -579,7 +602,10 @@
     Sound.win();
     $("winStars").textContent="★★★☆☆☆".substr(3-st,3);
     $("winInfo").textContent="步数 "+cur.moves+" · 用时 "+$("hudTime").textContent;
-    $("winNext").style.display = cur.lv<TOTAL_LEVELS ? "" : "none";
+    var last = cur.lv>=TOTAL_LEVELS;
+    $("winNext").style.display = last ? "none" : "";
+    $("winNextFloat").style.display = last ? "none" : "";
+    $("winOverlay").classList.remove("collapsed");
     $("winOverlay").classList.add("active");
   }
 
@@ -645,6 +671,11 @@
 
   $("winReplay").addEventListener("click",function(){ $("winOverlay").classList.remove("active"); startLevel(cur.lv); });
   $("winNext").addEventListener("click",function(){ $("winOverlay").classList.remove("active"); startLevel(Math.min(cur.lv+1,TOTAL_LEVELS)); });
+  $("winNextFloat").addEventListener("click",function(){ $("winOverlay").classList.remove("active"); startLevel(Math.min(cur.lv+1,TOTAL_LEVELS)); });
+  $("winSelect").addEventListener("click",function(){ $("winOverlay").classList.remove("active"); buildLevelGrid(); show("select"); });
+  // 收起 sheet 进入「欣赏模式」；欣赏时点击图片区域再把 sheet 升回来
+  $("winCollapse").addEventListener("click",function(){ $("winOverlay").classList.add("collapsed"); });
+  $("winScrim").addEventListener("click",function(){ if($("winOverlay").classList.contains("collapsed")) $("winOverlay").classList.remove("collapsed"); });
 
   // 屏幕尺寸变化时重新计算切片与缝隙
   var rzT;
