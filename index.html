@@ -7,15 +7,18 @@
 <title>拼图闯关</title>
 <style>
   :root{
-    --bg:#f7f4ef; --panel:#ffffff; --ink:#2c2c2a; --muted:#7a776f;
-    --line:rgba(0,0,0,.10); --accent:#d85a30; --accent2:#1d9e75; --gold:#e8a53c;
-    --seam:#e6e0d6;
+    --bg:#f6f2ec; --panel:#ffffff; --ink:#34322e; --muted:#8b877d;
+    --line:rgba(0,0,0,.08); --accent:#ef7d4f; --accent-d:#e76a3a;
+    --accent2:#27b08a; --gold:#f0b24a; --seam:#e9e3d8;
+    --shadow:0 6px 18px rgba(120,90,60,.12);
+    --shadow-sm:0 3px 10px rgba(120,90,60,.10);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;height:100%}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:var(--bg); color:var(--ink);
+    background:radial-gradient(125% 90% at 50% 0%, #fbf7f1 0%, #efe8dd 100%);
+    color:var(--ink);
     display:flex; align-items:center; justify-content:center;
     min-height:100dvh; overscroll-behavior:none;
   }
@@ -29,44 +32,64 @@
 
   /* ---------- Home ---------- */
   #home{align-items:center; justify-content:center; gap:22px; text-align:center}
-  .logo{font-size:30px; font-weight:700; letter-spacing:2px}
-  .logo small{display:block; font-size:13px; font-weight:400; color:var(--muted); letter-spacing:4px; margin-top:8px}
-  .btn{
-    border:none; border-radius:14px; padding:14px 26px; font-size:16px; font-weight:600;
-    background:var(--accent); color:#fff; cursor:pointer; transition:transform .08s, opacity .2s;
-    box-shadow:0 4px 14px rgba(216,90,48,.28);
+  .logo{
+    font-size:30px; font-weight:800; letter-spacing:2px;
+    background:linear-gradient(120deg,var(--accent-d),var(--gold));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
   }
-  .btn:active{transform:scale(.96)}
-  .btn.ghost{background:var(--panel); color:var(--ink); box-shadow:none; border:1px solid var(--line); font-weight:500}
-  .home-actions{display:flex; flex-direction:column; gap:12px; width:200px}
+  .logo small{display:block; font-size:13px; font-weight:500; color:var(--muted); letter-spacing:4px; margin-top:8px}
+  .btn{
+    border:none; border-radius:18px; padding:15px 26px; font-size:16px; font-weight:700; letter-spacing:.5px;
+    background:linear-gradient(180deg,var(--accent),var(--accent-d)); color:#fff; cursor:pointer;
+    transition:transform .08s ease, box-shadow .2s, filter .2s;
+    box-shadow:0 8px 18px rgba(231,106,58,.30);
+  }
+  .btn:active{transform:translateY(1px) scale(.97); box-shadow:0 4px 10px rgba(231,106,58,.28)}
+  .btn.ghost{background:var(--panel); color:var(--ink); box-shadow:var(--shadow-sm); border:1px solid var(--line); font-weight:600}
+  .btn.ghost:active{transform:scale(.97); background:#faf7f2}
+  .home-actions{display:flex; flex-direction:column; gap:12px; width:210px}
 
   /* ---------- Level select ---------- */
   #select{padding-top:8px}
   .topbar{display:flex; align-items:center; gap:10px; padding:8px 2px 14px; flex:0 0 auto}
   .topbar h2{font-size:17px; margin:0; font-weight:600; flex:1}
-  .iconbtn{border:1px solid var(--line); background:var(--panel); border-radius:10px; width:38px; height:38px; font-size:16px; cursor:pointer; color:var(--ink); flex:0 0 auto}
-  .iconbtn.muted{opacity:.4; color:var(--muted)}
+  .iconbtn{border:1px solid var(--line); background:var(--panel); border-radius:14px; width:42px; height:42px; font-size:18px; cursor:pointer; color:var(--ink); flex:0 0 auto; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-sm); transition:transform .08s, background .2s, color .2s}
+  .iconbtn:active{transform:scale(.94)}
+  .iconbtn.muted{background:#efe9e0; color:var(--muted); box-shadow:none}
+  .iconbtn svg{display:block}
+  #btnSound .ico-off{display:none}
+  #btnSound.muted .ico-on{display:none}
+  #btnSound.muted .ico-off{display:inline}
   .levels{flex:1 1 auto; overflow-y:auto; display:grid; grid-template-columns:repeat(4,1fr); gap:10px; padding:2px 2px 20px; align-content:start; min-height:0}
   .lvcell{
-    aspect-ratio:1; border-radius:14px; border:1px solid var(--line); background:var(--panel);
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
-    font-size:18px; font-weight:600; cursor:pointer; position:relative; overflow:hidden;
+    aspect-ratio:1; border-radius:20px; border:1px solid var(--line); background:var(--panel);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+    font-size:20px; font-weight:800; cursor:pointer; position:relative; overflow:hidden;
+    box-shadow:var(--shadow-sm); transition:transform .1s ease, box-shadow .2s;
   }
-  .lvcell .grid{font-size:10px; color:var(--muted); font-weight:400}
-  .lvcell.locked{opacity:.4}
-  .lvcell.done{border-color:var(--accent2)}
-  .lvcell .stars{font-size:9px; color:var(--gold); letter-spacing:1px; height:11px}
+  .lvcell:active{transform:scale(.95); box-shadow:var(--shadow)}
+  .lvcell .num{font-size:22px; font-weight:800; color:var(--ink); line-height:1}
+  .lvcell .grid{font-size:10px; color:var(--muted); font-weight:500}
+  .lvcell.locked{opacity:.45; filter:grayscale(.3)}
+  .lvcell.locked .num{color:var(--muted)}
+  .lvcell.done{border-color:var(--accent2); background:linear-gradient(180deg,#fff,#f0fbf7)}
+  .lvcell .stars{font-size:10px; color:var(--gold); letter-spacing:1px; height:12px}
+  .lvcell .lock{position:absolute; top:6px; right:8px; font-size:13px; opacity:.5}
 
   /* ---------- Game ---------- */
   #game{padding-top:8px}
   .hud{display:flex; align-items:stretch; gap:8px; padding:4px 2px 10px; flex:0 0 auto}
-  .hud .stat{flex:1 1 0; min-width:0; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:6px 4px; font-size:12px; color:var(--muted); text-align:center; display:flex; flex-direction:column; justify-content:center}
-  .hud .stat b{display:block; color:var(--ink); font-size:15px; font-weight:600; margin-top:1px}
+  .hud .stat{flex:1 1 0; min-width:0; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:7px 6px; display:flex; align-items:center; gap:7px; box-shadow:var(--shadow-sm)}
+  .hud .stat .s-ico{font-size:17px; line-height:1; flex:0 0 auto; filter:drop-shadow(0 1px 1px rgba(0,0,0,.06))}
+  .hud .stat .s-body{display:flex; flex-direction:column; min-width:0; line-height:1.12}
+  .hud .stat .s-body b{color:var(--ink); font-size:16px; font-weight:800}
+  .hud .stat .s-body em{font-style:normal; color:var(--muted); font-size:10px; font-weight:500}
   .hud .spacer{flex:1 1 auto; min-width:6px}
   .boardwrap{flex:1 1 auto; display:flex; align-items:center; justify-content:center; min-height:0; overflow:hidden; padding:2px 0}
   .board{
     position:relative; width:100%; max-width:100%; max-height:100%;
-    display:grid; gap:0; background:var(--seam); border-radius:12px;
+    display:grid; gap:0; background:var(--seam); border-radius:18px;
+    border:3px solid #fff; box-shadow:0 12px 30px rgba(120,90,60,.20);
     touch-action:none; user-select:none; overflow:hidden;
   }
   .piece{
@@ -89,17 +112,19 @@
   .piece.lifting .face{box-shadow:0 10px 26px rgba(0,0,0,.32)}
   .piece.hint .face{outline:3px solid var(--accent2); outline-offset:-3px; z-index:5}
 
-  .footer{display:flex; gap:8px; padding:10px 2px calc(10px + env(safe-area-inset-bottom)); flex:0 0 auto}
-  .footer .btn{flex:1 1 0; min-width:0; padding:13px 0; font-size:15px}
+  .footer{display:flex; gap:8px; padding:10px 2px calc(12px + env(safe-area-inset-bottom)); flex:0 0 auto}
+  .footer .btn{flex:1 1 0; min-width:0; padding:12px 0; font-size:14px; display:flex; align-items:center; justify-content:center; gap:6px; border-radius:16px}
+  .footer .btn .e{font-size:17px; line-height:1}
+  .footer .btn:active{transform:scale(.97)}
 
   /* peek + win overlay */
   .overlay{position:fixed; inset:0; background:rgba(20,18,16,.7); display:none; align-items:center; justify-content:center; z-index:100; padding:24px}
   .overlay.active{display:flex}
   .peekimg{max-width:88%; max-height:80%; border-radius:14px; box-shadow:0 10px 40px rgba(0,0,0,.5)}
-  .card{background:var(--panel); border-radius:20px; padding:28px 26px; text-align:center; width:100%; max-width:320px}
-  .card h3{margin:0 0 6px; font-size:22px}
-  .card .bigstars{font-size:30px; color:var(--gold); letter-spacing:4px; margin:10px 0}
-  .card p{color:var(--muted); font-size:14px; margin:6px 0 20px}
+  .card{background:var(--panel); border-radius:24px; padding:30px 26px; text-align:center; width:100%; max-width:320px; box-shadow:0 20px 50px rgba(60,40,20,.28)}
+  .card h3{margin:0 0 4px; font-size:24px; font-weight:800; background:linear-gradient(120deg,var(--accent-d),var(--gold)); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .card .bigstars{font-size:34px; color:var(--gold); letter-spacing:4px; margin:12px 0; text-shadow:0 2px 6px rgba(240,178,74,.35)}
+  .card p{color:var(--muted); font-size:14px; margin:6px 0 22px}
   .card .row{display:flex; gap:10px}
   .card .row .btn{flex:1; padding:13px 0; font-size:15px}
   .hidden-preload{position:absolute; width:0; height:0; overflow:hidden}
@@ -131,18 +156,21 @@
   <!-- Game -->
   <section id="game" class="screen">
     <div class="hud">
-      <div class="stat">关卡<b id="hudLevel">1</b></div>
-      <div class="stat">步数<b id="hudMoves">0</b></div>
-      <div class="stat">用时<b id="hudTime">0:00</b></div>
+      <div class="stat"><span class="s-ico">🏁</span><span class="s-body"><b id="hudLevel">1</b><em>关卡</em></span></div>
+      <div class="stat"><span class="s-ico">👣</span><span class="s-body"><b id="hudMoves">0</b><em>步数</em></span></div>
+      <div class="stat"><span class="s-ico">⏱️</span><span class="s-body"><b id="hudTime">0:00</b><em>用时</em></span></div>
       <div class="spacer"></div>
-      <button class="iconbtn" id="btnSound" title="音效开关">音</button>
-      <button class="iconbtn" id="gameBack">‹</button>
+      <button class="iconbtn" id="btnSound" title="音效：开" aria-label="音效开关">
+        <svg class="ico-on" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8 8 0 0 1 0 12"/></svg>
+        <svg class="ico-off" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><line x1="16" y1="9" x2="21" y2="15"/><line x1="21" y1="9" x2="16" y2="15"/></svg>
+      </button>
+      <button class="iconbtn" id="gameBack" title="返回">‹</button>
     </div>
     <div class="boardwrap"><div class="board" id="board"></div></div>
     <div class="footer">
-      <button class="btn ghost" id="btnPeek">看原图</button>
-      <button class="btn ghost" id="btnHint">提示</button>
-      <button class="btn ghost" id="btnRestart">重排</button>
+      <button class="btn ghost" id="btnPeek"><span class="e">👁️</span>看原图</button>
+      <button class="btn ghost" id="btnHint"><span class="e">💡</span>提示</button>
+      <button class="btn ghost" id="btnRestart"><span class="e">🔀</span>重排</button>
     </div>
   </section>
 
@@ -565,10 +593,10 @@
         var st=progress.stars[lv]||0;
         var cell=document.createElement("div");
         cell.className="lvcell"+(unlocked?"":" locked")+(st>0?" done":"");
-        cell.innerHTML="<div>"+lv+"</div>"+
+        cell.innerHTML="<div class='num'>"+lv+"</div>"+
                        "<div class='grid'>"+grid.c+"×"+grid.r+"</div>"+
                        "<div class='grid' style='font-size:9px;max-width:92%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>"+(grid.title||"")+"</div>"+
-                       "<div class='stars'>"+(st>0?"★★★".substr(0,st):"")+"</div>";
+                       (unlocked?"<div class='stars'>"+(st>0?"★★★".substr(0,st):"")+"</div>":"<div class='lock'>🔒</div>");
         if(unlocked) cell.addEventListener("click",function(){ startLevel(lv); });
         g.appendChild(cell);
       })(lv);
@@ -600,8 +628,8 @@
   $("btnSound").addEventListener("click",function(){
     var m=!Sound.isMuted();
     Sound.setMuted(m);
-    this.textContent=m?"静":"音";
     this.classList.toggle("muted",m);
+    this.title = m ? "音效：关" : "音效：开";
   });
   $("btnRestart").addEventListener("click",function(){ startLevel(cur.lv); });
   $("btnHint").addEventListener("click",hint);
