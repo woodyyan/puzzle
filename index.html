@@ -271,6 +271,15 @@
   var SEAM = 2;
   var SEAM_COLOR = "#e6e0d6"; // 与 --seam 一致，用于缝遮罩
 
+  // ---------- 自适应碎片数 ----------
+  // 决定“好不好点”的是每块碎片在屏幕上的实际大小，而非固定 c×r。
+  // 用「每块最小舒适尺寸」反推当前设备能容纳的最大网格，再用 manifest 网格当难度上限封顶：
+  // 同一关 iPhone 自动 ≤8×10，iPad/桌面能跑满甚至更大，横竖屏切换也会在下次进关时重算。
+  var MIN_PIECE_W = 45;            // 每块碎片最小宽度(px)。45 -> iPhone 竖屏棋盘约 8 列
+  var MIN_PIECE_H = 50;            // 每块碎片最小高度(px)。50 -> iPhone 竖屏约 10 行（配合宽度封顶 ≈8×10）
+  var MIN_GRID  = 3;               // 最少 3×3
+  var DEFAULT_IMG_ASPECT = 805/1200; // 图片默认宽高比（与生成图一致的 2:3 竖图）
+
   // ---------- 音效（Web Audio API 实时合成，无需任何外部音频文件） ----------
   // 直接利用浏览器发声，单文件、可离线、零资源；首次在用户手势内解锁（iOS 要求）。
   var Sound = (function(){
@@ -354,8 +363,10 @@
     if(lv<1) lv=1; if(lv>TOTAL_LEVELS) lv=TOTAL_LEVELS;
     cur.lv=lv;
     var L=LEVELS[lv-1];
-    var g={c:L.c,r:L.r};
-    cur.c=g.c; cur.r=g.r; cur.n=g.c*g.r; cur.img=L.img;
+    cur.img=L.img;
+    show("game");                          // 先显示，boardwrap 才有实际尺寸用于自适应网格
+    var g=adaptiveGrid(L.c, L.r);          // 按屏幕大小自适应碎片数（上限 = manifest 难度）
+    cur.c=g.c; cur.r=g.r; cur.n=g.c*g.r;
     var order=[]; for(var i=0;i<cur.n;i++) order.push(i);
     do{ shuffle(order); }while(isSolved(order));
     cur.slots=order; cur.moves=0;
@@ -365,7 +376,6 @@
     loadImage(cur.img);        // 按需加载当前关图片
     prefetchAhead(lv);         // 空闲时后台预取下一关
     startTimer();
-    show("game");      // 先显示，棋盘才有实际尺寸
     buildBoard();
   }
 
@@ -398,6 +408,26 @@
     boardEl.style.width=bw+"px";
     boardEl.style.height=bh+"px";
     return true;
+  }
+
+  // 按当前棋盘可用像素 + 图片比例，算出这台设备实际应玩的网格。
+  // 入参 (mc,mr) 是 manifest 设定的“难度上限”；返回值在比例不变的前提下被设备屏幕封顶。
+  function adaptiveGrid(mc, mr){
+    var wrap=boardEl.parentElement; // .boardwrap
+    var wrapW=wrap.clientWidth, wrapH=wrap.clientHeight;
+    if(wrapW===0||wrapH===0) return {c:mc, r:mr};        // 量不到就先用上限
+    var d=IMG_DIMS[cur.img];
+    var imgA = d ? (d.w/d.h) : DEFAULT_IMG_ASPECT;       // 图片未载时用默认竖图比例
+    // 棋盘实际像素（与 fitBoard 同逻辑：按比例完整放进可用区域）
+    var bw=wrapW, bh=bw/imgA;
+    if(bh>wrapH){ bh=wrapH; bw=bh*imgA; }
+    var maxC=Math.max(MIN_GRID, Math.floor(bw/MIN_PIECE_W));
+    var maxR=Math.max(MIN_GRID, Math.floor(bh/MIN_PIECE_H));
+    // 宽、高独立封顶（不等比）：列不超过 maxC、行不超过 maxR。
+    // 这样 iPhone 后期稳定封顶 ≈8×10，iPad/桌面则能跑满 manifest 设定的更大网格。
+    var c=Math.min(mc, maxC);
+    var r=Math.min(mr, maxR);
+    return {c:c, r:r};
   }
 
   // ---------- 分组（合并）计算 ----------
