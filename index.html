@@ -223,26 +223,26 @@
   // 内置兜底清单：即使直接双击打开（file:// 下 fetch 受限）也能玩；部署到 Vercel 后
   // 以仓库里的 manifest.json 为准。添加关卡 = 往 images/ 丢图 + 在 manifest.json 加一行。
   var FALLBACK_LEVELS = [
-    {img:"images/village1.png",c:7,r:7,title:"樱花村庄·红衣女孩"},
-    {img:"images/village2.png",c:7,r:7,title:"樱花村庄·花匠与狗"},
-    {img:"images/village3.png",c:7,r:7,title:"樱花村庄·放风筝"},
-    {img:"images/village4.png",c:7,r:8,title:"樱花村庄·撑伞少女"},
-    {img:"images/seaside1.png",c:7,r:8,title:"海边·堆沙堡"},
-    {img:"images/seaside2.png",c:7,r:8,title:"海边·渔夫与猫"},
-    {img:"images/seaside3.png",c:7,r:9,title:"海边·拾贝壳"},
-    {img:"images/seaside4.png",c:7,r:9,title:"海边·骑车家庭"},
-    {img:"images/forest1.png",c:7,r:9,title:"森林·松鼠与兔"},
-    {img:"images/forest2.png",c:8,r:10,title:"森林·廊下读书"},
-    {img:"images/forest3.png",c:8,r:10,title:"森林·熊崽与狐"},
-    {img:"images/lake1.png",c:8,r:10,title:"星空湖·营火"},
-    {img:"images/lake2.png",c:8,r:11,title:"星空湖·独木舟"},
-    {img:"images/lake3.png",c:8,r:11,title:"星空湖·观星"},
-    {img:"images/onsen1.png",c:8,r:11,title:"雪山温泉·小熊猫"},
-    {img:"images/onsen2.png",c:8,r:12,title:"雪山温泉·浴衣少女"},
-    {img:"images/onsen3.png",c:8,r:12,title:"雪山温泉·堆雪人"},
-    {img:"images/market1.png",c:8,r:12,title:"花园市集·花束"},
-    {img:"images/market2.png",c:9,r:12,title:"花园市集·气球"},
-    {img:"images/market3.png",c:9,r:12,title:"花园市集·园丁"}
+    {img:"images/village1.webp",c:7,r:7,title:"樱花村庄·红衣女孩"},
+    {img:"images/village2.webp",c:7,r:7,title:"樱花村庄·花匠与狗"},
+    {img:"images/village3.webp",c:7,r:7,title:"樱花村庄·放风筝"},
+    {img:"images/village4.webp",c:7,r:8,title:"樱花村庄·撑伞少女"},
+    {img:"images/seaside1.webp",c:7,r:8,title:"海边·堆沙堡"},
+    {img:"images/seaside2.webp",c:7,r:8,title:"海边·渔夫与猫"},
+    {img:"images/seaside3.webp",c:7,r:9,title:"海边·拾贝壳"},
+    {img:"images/seaside4.webp",c:7,r:9,title:"海边·骑车家庭"},
+    {img:"images/forest1.webp",c:7,r:9,title:"森林·松鼠与兔"},
+    {img:"images/forest2.webp",c:8,r:10,title:"森林·廊下读书"},
+    {img:"images/forest3.webp",c:8,r:10,title:"森林·熊崽与狐"},
+    {img:"images/lake1.webp",c:8,r:10,title:"星空湖·营火"},
+    {img:"images/lake2.webp",c:8,r:11,title:"星空湖·独木舟"},
+    {img:"images/lake3.webp",c:8,r:11,title:"星空湖·观星"},
+    {img:"images/onsen1.webp",c:8,r:11,title:"雪山温泉·小熊猫"},
+    {img:"images/onsen2.webp",c:8,r:12,title:"雪山温泉·浴衣少女"},
+    {img:"images/onsen3.webp",c:8,r:12,title:"雪山温泉·堆雪人"},
+    {img:"images/market1.webp",c:8,r:12,title:"花园市集·花束"},
+    {img:"images/market2.webp",c:9,r:12,title:"花园市集·气球"},
+    {img:"images/market3.webp",c:9,r:12,title:"花园市集·园丁"}
   ];
   var LEVELS = FALLBACK_LEVELS.slice();
   var TOTAL_LEVELS = LEVELS.length;
@@ -347,6 +347,8 @@
     $("hudLevel").textContent=lv;
     $("hudMoves").textContent=0;
     $("peekImg").src=cur.img;
+    loadImage(cur.img);        // 按需加载当前关图片
+    prefetchAhead(lv);         // 空闲时后台预取下一关
     startTimer();
     show("game");      // 先显示，棋盘才有实际尺寸
     buildBoard();
@@ -629,18 +631,33 @@
     }
   }
 
-  // ---------- 预加载图片并记录真实尺寸（用于按比例裁切） ----------
-  var IMG_DIMS={};
-  function preloadImages(){
-    LEVELS.forEach(function(L){
-      if(IMG_DIMS[L.img]) return;
-      var im=new Image();
-      im.onload=function(){
-        IMG_DIMS[L.img]={w:im.naturalWidth,h:im.naturalHeight};
-        if(screens.game.classList.contains("active") && cur.img===L.img) render();
-      };
-      im.src=L.img;
-    });
+  // ---------- 图片加载：按需加载当前关 + 空闲时后台预取下一关 ----------
+  // 关键优化：不再启动时全量下载所有图片。只加载当前要玩的那张；
+  // 玩的过程中用浏览器空闲时间（requestIdleCallback）预取下一关，做到“随开随玩”。
+  var IMG_DIMS={};            // src -> {w,h} 真实尺寸（用于按比例裁切）
+  var IMG_CACHE={};           // src -> true 已开始/完成加载，避免重复请求
+  function loadImage(src, onDone){
+    if(!src) return;
+    if(IMG_DIMS[src]){ if(onDone) onDone(); return; }
+    if(IMG_CACHE[src]) return;         // 已在加载中
+    IMG_CACHE[src]=true;
+    var im=new Image();
+    im.onload=function(){
+      IMG_DIMS[src]={w:im.naturalWidth,h:im.naturalHeight};
+      if(onDone) onDone();
+      // 若当前正在玩这一张，尺寸就绪后重排一次（按比例裁切）
+      if(screens.game.classList.contains("active") && cur.img===src) render();
+    };
+    im.onerror=function(){ delete IMG_CACHE[src]; };  // 失败允许重试
+    im.src=src;
+  }
+  // 浏览器空闲时预取接下来 1-2 关的图片（不影响当前操作）
+  function prefetchAhead(lv){
+    var run=function(){
+      for(var k=1;k<=2;k++){ var L=LEVELS[lv-1+k]; if(L) loadImage(L.img); }
+    };
+    if(window.requestIdleCallback) requestIdleCallback(run,{timeout:3000});
+    else setTimeout(run,800);
   }
 
   // ---------- 事件绑定 ----------
@@ -683,10 +700,16 @@
     if(screens.game.classList.contains("active")){ clearTimeout(rzT); rzT=setTimeout(render,150); }
   });
 
-  // 初始
+  // 初始：不再全量预载图片。只读清单；图片在真正开始某一关时才按需下载。
   show("home");
-  preloadImages();
   loadManifest().then(function(){ if(screens.select.classList.contains("active")) buildLevelGrid(); });
+
+  // 注册 Service Worker：缓存已访问的图片，二刷/重玩秒开、支持离线（渐进增强，失败不影响游戏）
+  if("serviceWorker" in navigator){
+    window.addEventListener("load",function(){
+      navigator.serviceWorker.register("sw.js").catch(function(){});
+    });
+  }
 })();
 </script>
 </body>
