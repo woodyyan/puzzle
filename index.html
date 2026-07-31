@@ -99,7 +99,7 @@
     .hud .stat .s-body b{font-size:14px}
     .hud .stat .s-body em{font-size:9px}
   }
-  .boardwrap{flex:1 1 auto; display:flex; align-items:center; justify-content:center; min-height:0; overflow:hidden; padding:2px 0}
+  .boardwrap{flex:1 1 auto; display:flex; align-items:center; justify-content:center; min-height:0; overflow:hidden; padding:2px 0; position:relative}
   .board{
     position:relative; width:100%; max-width:100%; max-height:100%;
     display:grid; gap:0; background:var(--seam); border-radius:18px;
@@ -159,30 +159,102 @@
   .winSub{display:flex; gap:10px; margin-top:10px}
   .winSub .btn{flex:1; padding:12px 0; font-size:14px; border-radius:16px}
   @keyframes winPop{0%{transform:scale(.6); opacity:0} 100%{transform:scale(1); opacity:1}}
+
+  /* ---------- Juice：合并粒子 / 连击徽章 / 落位回弹 / 星级弹出 ---------- */
+  .fxlayer{position:absolute; inset:0; pointer-events:none; z-index:60}
+  .particle{position:absolute; width:7px; height:7px; border-radius:50%; pointer-events:none;
+    animation:pfly .55s ease-out forwards}
+  @keyframes pfly{to{transform:translate(var(--dx),var(--dy)) scale(.25); opacity:0}}
+  .combo{position:absolute; z-index:61; font-size:19px; font-weight:800; color:var(--accent);
+    pointer-events:none; text-shadow:0 2px 8px rgba(216,90,48,.4);
+    animation:cpop .65s ease-out forwards}
+  @keyframes cpop{0%{transform:translate(-50%,-50%) scale(.4); opacity:0}
+    25%{transform:translate(-50%,-50%) scale(1.3); opacity:1}
+    100%{transform:translate(-50%,-160%) scale(1); opacity:0}}
+  .piece.snap{animation:snapz .14s ease-out}
+  @keyframes snapz{0%{transform:scale(1.07)} 100%{transform:scale(1)}}
+  .winSheet .bigstars span{display:inline-block; opacity:.22; transform:scale(.6)}
+  .winSheet .bigstars span.on{opacity:1; transform:scale(1)}
+  .winSheet .bigstars span.on.anim{animation:starpop .45s cubic-bezier(.2,1.5,.4,1) both; animation-delay:var(--d,0s)}
+  @keyframes starpop{0%{transform:scale(.2) rotate(-40deg); opacity:0}
+    100%{transform:scale(1) rotate(0); opacity:1}}
+
+  /* ---------- 主题列表（首页） ---------- */
+  .themelist{flex:1 1 auto; overflow-y:auto; display:flex; flex-direction:column; gap:14px; padding:8px 2px 24px; min-height:0}
+  .tcard{background:var(--panel); border-radius:20px; overflow:hidden; box-shadow:var(--shadow);
+    border:1px solid var(--line); cursor:pointer; transition:transform .1s ease}
+  .tcard:active{transform:scale(.98)}
+  .tcard .cover{width:100%; height:150px; object-fit:cover; display:block; background:var(--seam)}
+  .tcard .t-body{display:flex; align-items:center; gap:10px; padding:12px 16px}
+  .tcard .t-title{font-weight:800; font-size:16px}
+  .tcard .t-sub{font-size:11px; color:var(--muted); margin-top:2px}
+  .tcard .t-prog{margin-left:auto; text-align:right; font-size:12px; color:var(--muted); flex:0 0 auto}
+  .tcard .t-prog b{color:var(--accent); font-size:16px}
+  .tcard .t-bar{height:5px; background:var(--seam); border-radius:99px; overflow:hidden; margin-top:6px}
+  .tcard .t-bar i{display:block; height:100%; background:linear-gradient(90deg,var(--gold),var(--accent)); border-radius:99px}
+  .home-reset{text-align:center; padding:0 0 calc(14px + env(safe-area-inset-bottom)); font-size:12px}
+  .home-reset button{border:none; background:none; color:var(--muted); font-size:12px; cursor:pointer; text-decoration:underline}
+
+  /* ---------- 章节地图 ---------- */
+  .mapcol{flex:1 1 auto; overflow-y:auto; padding:26px 0 48px; min-height:0; position:relative}
+  .mapcol::before{content:""; position:absolute; left:50%; top:0; bottom:0; width:0;
+    border-left:3px dashed rgba(0,0,0,.10)}
+  .mapnode{display:flex; align-items:center; gap:12px; width:230px; margin:0 auto 20px; position:relative}
+  .mapnode:nth-child(odd){transform:translateX(-34px)}
+  .mapnode:nth-child(even){transform:translateX(34px)}
+  .mcircle{width:54px; height:54px; border-radius:50%; flex:0 0 auto; display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:18px; border:3px solid #fff; box-shadow:var(--shadow); background:var(--panel); color:var(--ink)}
+  .mapnode.done .mcircle{background:linear-gradient(135deg,#ffe9c2,#ffd88a); color:#8a5a00}
+  .mapnode.cur .mcircle{background:linear-gradient(135deg,var(--accent),var(--accent-d)); color:#fff; animation:mpulse 1.6s ease-in-out infinite}
+  .mapnode.locked{opacity:.55}
+  .mapnode.locked .mcircle{color:var(--muted)}
+  .minfo{font-size:12px; color:var(--muted); line-height:1.4}
+  .minfo .stars{color:var(--gold); font-size:13px; letter-spacing:1px}
+  .minfo .gridtxt{font-size:10px}
+  @keyframes mpulse{0%,100%{transform:scale(1)} 50%{transform:scale(1.1)}}
+  .chapter-read{margin:0 2px 8px}
+
+  /* ---------- 过关剧情字幕 ---------- */
+  .winSheet .winCaption{color:var(--ink); font-size:15px; line-height:1.6; margin:2px 0 14px;
+    padding:10px 14px; background:#faf6ef; border-radius:14px; font-weight:600}
+
+  /* ---------- 漫画阅读模式 ---------- */
+  .reader{position:fixed; inset:0; background:#171310; z-index:120; display:none; flex-direction:column}
+  .reader.active{display:flex}
+  .readerTop{display:flex; align-items:center; gap:12px; padding:calc(10px + env(safe-area-inset-top)) 14px 8px; color:#fff; flex:0 0 auto}
+  .readerTop .rt-title{font-weight:700; font-size:15px}
+  .readerTop .iconbtn{background:rgba(255,255,255,.12); border-color:transparent; color:#fff}
+  .readerTrack{flex:1 1 auto; display:flex; overflow-x:auto; scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch; min-height:0}
+  .rpage{flex:0 0 100%; height:100%; scroll-snap-align:center; display:flex; align-items:center; justify-content:center; padding:8px}
+  .rpage img{max-width:100%; max-height:100%; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,.5); object-fit:contain}
+  .rlock{color:#8a857c; text-align:center; font-size:13px; line-height:1.9}
+  .rlock .big{font-size:40px; display:block; margin-bottom:6px; opacity:.6}
+  .readerCap{padding:10px 22px calc(14px + env(safe-area-inset-bottom)); color:#f5efe4; text-align:center; flex:0 0 auto}
+  .readerCap .cap{font-size:15px; line-height:1.6; min-height:24px}
+  .readerCap .num{opacity:.45; font-size:12px; margin-top:4px}
   .hidden-preload{position:absolute; width:0; height:0; overflow:hidden}
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- Home -->
+  <!-- Home：主题（剧情）列表 -->
   <section id="home" class="screen active">
-    <div class="logo">拼图闯关<small>PUZZLE JOURNEY</small></div>
-    <div class="home-actions">
-      <button class="btn" id="btnContinue">继续游戏</button>
-      <button class="btn ghost" id="btnSelect">选择关卡</button>
-      <button class="btn ghost" id="btnReset">重置进度</button>
-    </div>
-    <p style="color:var(--muted);font-size:12px;max-width:260px;line-height:1.7">两块只要「拼对」（彼此相邻且原图本就相邻）就会自动合并成无缝整体，可整块拖动。拖到别处→整组与那里对调；拖到一个大合并块上→会把大块打碎。碎片按原图比例裁切，长图也能玩。</p>
+    <div class="topbar"><h2>拼图故事集</h2></div>
+    <div class="themelist" id="themeList"></div>
+    <div class="home-reset"><button id="btnReset">重置全部进度</button></div>
   </section>
 
-  <!-- Level select -->
-  <section id="select" class="screen">
+  <!-- Chapter：章节地图（路径节点 = 每一页） -->
+  <section id="chapter" class="screen">
     <div class="topbar">
-      <button class="iconbtn" id="selBack">‹</button>
-      <h2>选择关卡</h2>
+      <button class="iconbtn" id="chapterBack">‹</button>
+      <h2 id="chapterTitle">章节</h2>
+      <div class="spacer"></div>
+      <button class="btn chapter-read" id="btnReader">📖 阅读</button>
     </div>
-    <div class="levels" id="levelGrid"></div>
+    <div class="mapcol" id="mapCol"></div>
   </section>
 
   <!-- Game -->
@@ -196,9 +268,10 @@
         <svg class="ico-on" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8 8 0 0 1 0 12"/></svg>
         <svg class="ico-off" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><line x1="16" y1="9" x2="21" y2="15"/><line x1="21" y1="9" x2="16" y2="15"/></svg>
       </button>
+      <button class="iconbtn" id="btnFx" title="动效：开" aria-label="动效开关">✨</button>
       <button class="iconbtn" id="gameBack" title="返回">‹</button>
     </div>
-    <div class="boardwrap"><div class="board" id="board"></div></div>
+    <div class="boardwrap"><div class="board" id="board"></div><div class="fxlayer" id="fxLayer"></div></div>
     <div class="footer">
       <button class="btn ghost" id="btnPeek"><span class="e">👁️</span>看原图</button>
       <button class="btn ghost" id="btnHint"><span class="e">💡</span>提示</button>
@@ -216,7 +289,8 @@
     <button class="winCollapse" id="winCollapse" aria-label="收起以欣赏图片">︾</button>
     <div class="winEmoji">🎉</div>
     <h3>过关啦！</h3>
-    <div class="bigstars" id="winStars">★★★</div>
+    <div class="bigstars" id="winStars"><span>★</span><span>★</span><span>★</span></div>
+    <div class="winCaption" id="winCaption"></div>
     <p id="winInfo"></p>
     <button class="btn winMain" id="winNext">下一关 →</button>
     <div class="winSub">
@@ -228,6 +302,19 @@
 
 <div class="hidden-preload" id="preload"></div>
 
+<!-- 漫画阅读模式 -->
+<div class="reader" id="reader">
+  <div class="readerTop">
+    <button class="iconbtn" id="readerClose">‹</button>
+    <span class="rt-title" id="readerTitle">阅读</span>
+  </div>
+  <div class="readerTrack" id="readerTrack"></div>
+  <div class="readerCap">
+    <div class="cap" id="readerCapText"></div>
+    <div class="num" id="readerPageNum"></div>
+  </div>
+</div>
+
 <script>
 (function(){
   "use strict";
@@ -236,35 +323,72 @@
   // ---------- 关卡内容：由 manifest.json 驱动（部署后只改清单即可加图/加关） ----------
   // 内置兜底清单：即使直接双击打开（file:// 下 fetch 受限）也能玩；部署到 Vercel 后
   // 以仓库里的 manifest.json 为准。添加关卡 = 往 images/ 丢图 + 在 manifest.json 加一行。
-  var FALLBACK_LEVELS = [
-    {img:"images/village1.webp",c:7,r:7,title:"樱花村庄·红衣女孩"},
-    {img:"images/village2.webp",c:7,r:7,title:"樱花村庄·花匠与狗"},
-    {img:"images/village3.webp",c:7,r:7,title:"樱花村庄·放风筝"},
-    {img:"images/village4.webp",c:7,r:8,title:"樱花村庄·撑伞少女"},
-    {img:"images/seaside1.webp",c:7,r:8,title:"海边·堆沙堡"},
-    {img:"images/seaside2.webp",c:7,r:8,title:"海边·渔夫与猫"},
-    {img:"images/seaside3.webp",c:7,r:9,title:"海边·拾贝壳"},
-    {img:"images/seaside4.webp",c:7,r:9,title:"海边·骑车家庭"},
-    {img:"images/forest1.webp",c:7,r:9,title:"森林·松鼠与兔"},
-    {img:"images/forest2.webp",c:8,r:10,title:"森林·廊下读书"},
-    {img:"images/forest3.webp",c:8,r:10,title:"森林·熊崽与狐"},
-    {img:"images/lake1.webp",c:8,r:10,title:"星空湖·营火"},
-    {img:"images/lake2.webp",c:8,r:11,title:"星空湖·独木舟"},
-    {img:"images/lake3.webp",c:8,r:11,title:"星空湖·观星"},
-    {img:"images/onsen1.webp",c:8,r:11,title:"雪山温泉·小熊猫"},
-    {img:"images/onsen2.webp",c:8,r:12,title:"雪山温泉·浴衣少女"},
-    {img:"images/onsen3.webp",c:8,r:12,title:"雪山温泉·堆雪人"},
-    {img:"images/market1.webp",c:8,r:12,title:"花园市集·花束"},
-    {img:"images/market2.webp",c:9,r:12,title:"花园市集·气球"},
-    {img:"images/market3.webp",c:9,r:12,title:"花园市集·园丁"}
+  var CLASSIC_PAGES = [
+    {img:"images/village1.webp",c:7,r:7,caption:"樱花村庄·红衣女孩"},
+    {img:"images/village2.webp",c:7,r:7,caption:"樱花村庄·花匠与狗"},
+    {img:"images/village3.webp",c:7,r:7,caption:"樱花村庄·放风筝"},
+    {img:"images/village4.webp",c:7,r:8,caption:"樱花村庄·撑伞少女"},
+    {img:"images/seaside1.webp",c:7,r:8,caption:"海边·堆沙堡"},
+    {img:"images/seaside2.webp",c:7,r:8,caption:"海边·渔夫与猫"},
+    {img:"images/seaside3.webp",c:7,r:9,caption:"海边·拾贝壳"},
+    {img:"images/seaside4.webp",c:7,r:9,caption:"海边·骑车家庭"},
+    {img:"images/forest1.webp",c:7,r:9,caption:"森林·松鼠与兔"},
+    {img:"images/forest2.webp",c:8,r:10,caption:"森林·廊下读书"},
+    {img:"images/forest3.webp",c:8,r:10,caption:"森林·熊崽与狐"},
+    {img:"images/lake1.webp",c:8,r:10,caption:"星空湖·营火"},
+    {img:"images/lake2.webp",c:8,r:11,caption:"星空湖·独木舟"},
+    {img:"images/lake3.webp",c:8,r:11,caption:"星空湖·观星"},
+    {img:"images/onsen1.webp",c:8,r:11,caption:"雪山温泉·小熊猫"},
+    {img:"images/onsen2.webp",c:8,r:12,caption:"雪山温泉·浴衣少女"},
+    {img:"images/onsen3.webp",c:8,r:12,caption:"雪山温泉·堆雪人"},
+    {img:"images/market1.webp",c:8,r:12,caption:"花园市集·花束"},
+    {img:"images/market2.webp",c:9,r:12,caption:"花园市集·气球"},
+    {img:"images/market3.webp",c:9,r:12,caption:"花园市集·园丁"}
   ];
-  var LEVELS = FALLBACK_LEVELS.slice();
-  var TOTAL_LEVELS = LEVELS.length;
-  // 部署到 Vercel 后读取真实 manifest.json；读取失败（如 file://）则保留兜底清单
+  var BAKERY_PAGES = [
+    {img:"images/bakery/p01.webp",c:7,r:7,caption:"春天，森林里开了一家小小的面包房。"},
+    {img:"images/bakery/p02.webp",c:7,r:7,caption:"他们种下小麦，约定秋天做最大的面包。"},
+    {img:"images/bakery/p03.webp",c:7,r:8,caption:"第一炉面包的香气，飘遍了整座森林。"},
+    {img:"images/bakery/p04.webp",c:7,r:8,caption:"夏天，面包房成了森林里最热闹的地方。"},
+    {img:"images/bakery/p05.webp",c:7,r:9,caption:"雷雨夜，面包房里却比任何时候都温暖。"},
+    {img:"images/bakery/p06.webp",c:7,r:9,caption:"萤火虫的夜里，他们许下秋天的约定。"},
+    {img:"images/bakery/p07.webp",c:8,r:10,caption:"秋天，他们迎来了金色的丰收。"},
+    {img:"images/bakery/p08.webp",c:8,r:10,caption:"用新麦烤的大面包，甜到了每个人心里。"},
+    {img:"images/bakery/p09.webp",c:8,r:11,caption:"初雪落下时，面包房的灯总是亮着。"},
+    {img:"images/bakery/p10.webp",c:9,r:12,caption:"四季轮回，面包房里永远有你的一席之地。"}
+  ];
+  var SKY_PAGES = [
+    {img:"images/sky/p01.webp",c:7,r:7,caption:"旧物店的阁楼上，小狐狸发现了一张残缺的藏宝图。"},
+    {img:"images/sky/p02.webp",c:7,r:7,caption:"他们把旧木船，改成了会飞的船。"},
+    {img:"images/sky/p03.webp",c:7,r:8,caption:"穿过云层的那一刻，世界变小了。"},
+    {img:"images/sky/p04.webp",c:7,r:8,caption:"第一道难关，是会“吃船”的雷暴云墙。"},
+    {img:"images/sky/p05.webp",c:7,r:9,caption:"闯过去才发现，风暴的背后藏着彩虹。"},
+    {img:"images/sky/p06.webp",c:7,r:9,caption:"飞艇受了伤，他们迫降在一座无名小岛。"},
+    {img:"images/sky/p07.webp",c:8,r:10,caption:"岛上的新朋友，帮他们修好了翅膀。"},
+    {img:"images/sky/p08.webp",c:8,r:10,caption:"遗迹深处，藏宝图的缺角找到了答案。"},
+    {img:"images/sky/p09.webp",c:8,r:11,caption:"传说中的宝藏，竟然是一袋会发光的种子。"},
+    {img:"images/sky/p10.webp",c:9,r:12,caption:"把宝藏种下去的地方，会长出新的故事。"}
+  ];
+  var FALLBACK_THEMES = [
+    {id:"bakery", title:"森林面包房的四季", cover:"images/bakery/p01.webp", pages:BAKERY_PAGES},
+    {id:"sky", title:"天空岛寻宝记", cover:"images/sky/p03.webp", pages:SKY_PAGES},
+    {id:"classic", title:"四季物语 · 经典图库", cover:"images/village1.webp", pages:CLASSIC_PAGES}
+  ];
+  var THEMES = FALLBACK_THEMES;
+  // 部署到 Vercel 后读取真实 manifest.json；读取失败（如 file://）则保留兜底结构
   function loadManifest(){
     return fetch("manifest.json").then(function(r){ if(!r.ok) throw 0; return r.json(); })
-      .then(function(m){ if(m && m.levels && m.levels.length){ LEVELS=m.levels; TOTAL_LEVELS=LEVELS.length; } })
-      .catch(function(){ /* 保持兜底清单 */ });
+      .then(function(m){
+        if(m && m.themes && m.themes.length){ THEMES=m.themes; }
+        else if(m && m.levels && m.levels.length){   // 兼容旧平铺格式
+          THEMES=[{id:"classic",title:"四季物语",cover:m.levels[0].img,pages:m.levels}];
+        }
+      })
+      .catch(function(){ /* 保持兜底结构 */ });
+  }
+  function themeById(tid){
+    for(var i=0;i<THEMES.length;i++) if(THEMES[i].id===tid) return THEMES[i];
+    return THEMES[0];
   }
 
   // 合并后的缝隙宽度（px）。组内为 0，组间为 S。
@@ -317,11 +441,12 @@
       pickup:function(){ blip({type:"sine", f0:480, f1:680, d:0.10, v:0.09}); },
       // 松手：“哒”（短促下行）
       drop:function(){ blip({type:"triangle", f0:320, f1:150, d:0.07, v:0.16}); },
-      // 合并成功：可爱的“啵–铃–铃”上行小 sparkle（俏皮上滑 + 清甜铃音 + 尾音闪光）
-      merge:function(){
-        blip({type:"triangle", f0:523.25, f1:784.0, d:0.09, v:0.15});       // C5→G5 俏皮上滑“啵”
-        setTimeout(function(){ blip({type:"sine", f0:1318.5, d:0.20, v:0.14}); }, 70);  // E6 清甜“铃”
-        setTimeout(function(){ blip({type:"sine", f0:1760.0, d:0.14, v:0.07}); }, 150); // A6 尾音闪光
+      // 合并成功：可爱的“啵–铃–铃”上行小 sparkle；combo 越高音调越高（封顶 1.6 倍）
+      merge:function(combo){
+        var k=Math.min(1.6, 1+0.07*((combo||1)-1));
+        blip({type:"triangle", f0:523.25*k, f1:784.0*k, d:0.09, v:0.15});       // C5→G5 俏皮上滑“啵”
+        setTimeout(function(){ blip({type:"sine", f0:1318.5*k, d:0.20, v:0.14}); }, 70);  // E6 清甜“铃”
+        setTimeout(function(){ blip({type:"sine", f0:1760.0*k, d:0.14, v:0.07}); }, 150); // A6 尾音闪光
       },
       // 过关：上行小琶音（附加，不喜欢可删）
       win:function(){
@@ -331,24 +456,103 @@
     };
   })();
 
-  // ---------- 进度存储 ----------
-  var SKEY = "puzzle_progress_v1";
+  // ---------- 动效（Juice）：粒子 / 连击 / 撒花 / 震动 ----------
+  var fxOn=(function(){ try{ return localStorage.getItem("puzzle_fx_on")!=="0"; }catch(e){ return true; } })();
+  function saveFx(){ try{ localStorage.setItem("puzzle_fx_on", fxOn?"1":"0"); }catch(e){} }
+  var fxLayer=null;                       // 在元素初始化时指向 #fxLayer
+  var combo=0;                            // 连击：连续“产生新合并”的移动次数
+  function buzz(p){ if(fxOn && navigator.vibrate){ try{ navigator.vibrate(p); }catch(e){} } }
+  // 合并粒子：在棋盘坐标 (x,y) 喷 n 个小圆点，500ms 后自动移除
+  function burst(x,y,n){
+    if(!fxOn||!fxLayer) return;
+    var colors=["#f0b24a","#e76a3a","#3fae8a","#ffffff"];
+    for(var i=0;i<n;i++){
+      var s=document.createElement("span");
+      s.className="particle";
+      var ang=Math.random()*Math.PI*2, dist=24+Math.random()*42;
+      s.style.left=x+"px"; s.style.top=y+"px";
+      s.style.background=colors[i%colors.length];
+      s.style.setProperty("--dx",(Math.cos(ang)*dist)+"px");
+      s.style.setProperty("--dy",(Math.sin(ang)*dist-14)+"px");
+      fxLayer.appendChild(s);
+      (function(el){ setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); },600); })(s);
+    }
+  }
+  // 连击徽章：合并处弹 “×N”
+  function comboBadge(x,y,c){
+    if(!fxOn||!fxLayer) return;
+    var b=document.createElement("div");
+    b.className="combo"; b.textContent="×"+c;
+    b.style.left=x+"px"; b.style.top=y+"px";
+    fxLayer.appendChild(b);
+    setTimeout(function(){ if(b.parentNode) b.parentNode.removeChild(b); },700);
+  }
+  // 过关撒花：全屏 canvas 彩带 ~1.8s
+  function confetti(){
+    if(!fxOn) return;
+    var cv=document.createElement("canvas");
+    cv.style.cssText="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:150";
+    document.body.appendChild(cv);
+    var ctx=cv.getContext("2d");
+    cv.width=window.innerWidth; cv.height=window.innerHeight;
+    var colors=["#e76a3a","#f0b24a","#3fae8a","#d85a30","#8ecae6","#ffffff"];
+    var ps=[];
+    for(var i=0;i<90;i++){
+      ps.push({x:Math.random()*cv.width, y:-20-Math.random()*cv.height*0.35,
+               w:5+Math.random()*6, h:8+Math.random()*8, c:colors[i%colors.length],
+               vy:2+Math.random()*3, vx:-1.5+Math.random()*3, r:Math.random()*Math.PI, vr:-0.1+Math.random()*0.2});
+    }
+    var t0=Date.now();
+    (function tick(){
+      var el=Date.now()-t0;
+      ctx.clearRect(0,0,cv.width,cv.height);
+      for(var i=0;i<ps.length;i++){
+        var p=ps[i];
+        p.x+=p.vx; p.y+=p.vy; p.r+=p.vr;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r);
+        ctx.globalAlpha=Math.max(0,1-el/1800); ctx.fillStyle=p.c;
+        ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+        ctx.restore();
+      }
+      if(el<1800) requestAnimationFrame(tick);
+      else if(cv.parentNode) cv.parentNode.removeChild(cv);
+    })();
+  }
+
+  // ---------- 进度存储（v2：按主题分组；自动从 v1 迁移到 classic 主题） ----------
+  var SKEY = "puzzle_progress_v2";
+  function defaultProg(){ return {themes:{}}; }
   function loadProgress(){
-    try{ return JSON.parse(localStorage.getItem(SKEY)) || {unlocked:1, stars:{}}; }
-    catch(e){ return {unlocked:1, stars:{}}; }
+    var p=null;
+    try{ p=JSON.parse(localStorage.getItem(SKEY)); }catch(e){}
+    if(p && p.themes) return p;
+    // 迁移 v1：{unlocked, stars} -> {themes:{classic:{unlocked, stars}}}
+    p=defaultProg();
+    try{
+      var old=JSON.parse(localStorage.getItem("puzzle_progress_v1"));
+      if(old && old.unlocked){ p.themes["classic"]={unlocked:old.unlocked, stars:old.stars||{}}; }
+    }catch(e){}
+    return p;
   }
   function saveProgress(p){ try{ localStorage.setItem(SKEY, JSON.stringify(p)); }catch(e){} }
   var progress = loadProgress();
+  function themeProg(tid){
+    if(!progress.themes[tid]) progress.themes[tid]={unlocked:1, stars:{}};
+    return progress.themes[tid];
+  }
 
   // ---------- 元素 ----------
   var $=function(id){return document.getElementById(id);};
   var boardEl = $("board");
-  var screens={home:$("home"),select:$("select"),game:$("game")};
+  fxLayer = $("fxLayer");               // Juice 粒子/徽章承载层
+  var screens={home:$("home"),chapter:$("chapter"),game:$("game")};
   function show(name){ for(var k in screens){ screens[k].classList.toggle("active",k===name);} }
 
   // ---------- 游戏状态 ----------
-  var cur={lv:1,c:3,r:3,n:9,slots:[],moves:0,t0:0,timer:null,img:"",
+  var cur={tid:"bakery",lv:1,c:3,r:3,n:9,slots:[],moves:0,t0:0,timer:null,img:"",
            groups:[],groupId:[],cellW:0,cellH:0};
+  function curTheme(){ return themeById(cur.tid); }
+  function curPages(){ return curTheme().pages; }
 
   function rcOf(pos){ return {row:Math.floor(pos/cur.c), col:pos%cur.c}; }
   function posOf(row,col){ return row*cur.c+col; }
@@ -359,22 +563,23 @@
   }
   function isSolved(s){ for(var i=0;i<s.length;i++){ if(s[i]!==i) return false;} return true; }
 
-  function startLevel(lv){
-    if(lv<1) lv=1; if(lv>TOTAL_LEVELS) lv=TOTAL_LEVELS;
-    cur.lv=lv;
-    var L=LEVELS[lv-1];
+  function startPage(tid, lv){
+    var theme=themeById(tid), total=theme.pages.length;
+    if(lv<1) lv=1; if(lv>total) lv=total;
+    cur.tid=tid; cur.lv=lv;
+    var L=theme.pages[lv-1];
     cur.img=L.img;
     show("game");                          // 先显示，boardwrap 才有实际尺寸用于自适应网格
     var g=adaptiveGrid(L.c, L.r);          // 按屏幕大小自适应碎片数（上限 = manifest 难度）
     cur.c=g.c; cur.r=g.r; cur.n=g.c*g.r;
     var order=[]; for(var i=0;i<cur.n;i++) order.push(i);
     do{ shuffle(order); }while(isSolved(order));
-    cur.slots=order; cur.moves=0;
+    cur.slots=order; cur.moves=0; combo=0;   // 新关卡：连击清零
     $("hudLevel").textContent=lv;
     $("hudMoves").textContent=0;
     $("peekImg").src=cur.img;
     loadImage(cur.img);        // 按需加载当前关图片
-    prefetchAhead(lv);         // 空闲时后台预取下一关
+    prefetchAhead(tid, lv);    // 空闲时后台预取下一页
     startTimer();
     buildBoard();
   }
@@ -562,9 +767,34 @@
     if(drag.moved){
       var dCol=Math.round(dx/cur.cellW), dRow=Math.round(dy/cur.cellH);
       var merged=tryMove(drag.grp, dCol, dRow);
-      if(merged===true)      Sound.merge();   // 合并成功：清脆“叮”
-      else if(merged===false) Sound.drop();   // 移动但无新合并：松手“哒”
-      // merged===undefined -> 越界放弃，归位，不发声
+      if(merged!==undefined){
+        // 落位回弹：任何成功移动的组都轻轻“吸”一下
+        drag.grp.forEach(function(p){
+          var rc=rcOf(p), nr=rc.row+dRow, nc=rc.col+dCol;
+          if(nr<0||nr>=cur.r||nc<0||nc>=cur.c) return;
+          var el=boardEl.children[posOf(nr,nc)];
+          if(el) el.classList.add("snap");
+        });
+      }
+      if(merged===true){
+        combo++;
+        Sound.merge(combo);
+        // 合并庆祝：粒子 + (≥2连击)徽章 + 震动，位置 = 移动后组的中心（换算到 boardwrap 坐标）
+        var ox=boardEl.offsetLeft, oy=boardEl.offsetTop, cx=0, cy=0, cnt=0;
+        drag.grp.forEach(function(p){
+          var rc=rcOf(p), nr=rc.row+dRow, nc=rc.col+dCol;
+          if(nr<0||nr>=cur.r||nc<0||nc>=cur.c) return;
+          cx+=(nc+0.5)*cur.cellW; cy+=(nr+0.5)*cur.cellH; cnt++;
+        });
+        if(cnt>0){
+          cx=ox+cx/cnt; cy=oy+cy/cnt;
+          burst(cx,cy,combo>=3?16:10);
+          if(combo>=2) comboBadge(cx,cy,combo);
+        }
+        buzz(15);
+      }
+      else if(merged===false){ combo=0; Sound.drop(); }   // 移动但无新合并：连击清零 + 松手“哒”
+      // merged===undefined -> 越界放弃，归位，不发声、不清连击
     }else{
       Sound.drop();                        // 拎起又放下（没移动）：轻“哒”
     }
@@ -641,40 +871,115 @@
   }
   function win(){
     clearInterval(cur.timer);
+    var theme=curTheme(), total=theme.pages.length, page=theme.pages[cur.lv-1];
+    var tp=themeProg(cur.tid);
     var st=starsFor(cur.moves,cur.n);
-    var prev=progress.stars[cur.lv]||0;
-    if(st>prev) progress.stars[cur.lv]=st;
-    if(cur.lv+1>progress.unlocked && cur.lv<TOTAL_LEVELS) progress.unlocked=cur.lv+1;
+    var prev=tp.stars[cur.lv]||0;
+    if(st>prev) tp.stars[cur.lv]=st;
+    if(cur.lv+1>tp.unlocked && cur.lv<total) tp.unlocked=cur.lv+1;
     saveProgress(progress);
     Sound.win();
-    $("winStars").textContent="★★★☆☆☆".substr(3-st,3);
+    confetti();                            // 撒花
+    buzz([40,60,40]);                      // 过关震动（两段）
+    // 三颗星逐颗弹出（fx 关闭时直接亮，不播动画）
+    var spans=$("winStars").children;
+    for(var i=0;i<spans.length;i++){
+      spans[i].className = i<st ? ("on"+(fxOn?" anim":"")) : "";
+      spans[i].style.setProperty("--d",(0.25+i*0.22)+"s");
+    }
+    // 本页的一句话剧情
+    $("winCaption").textContent = page.caption || "";
+    $("winCaption").style.display = page.caption ? "" : "none";
     $("winInfo").textContent="步数 "+cur.moves+" · 用时 "+$("hudTime").textContent;
-    var last = cur.lv>=TOTAL_LEVELS;
+    var last = cur.lv>=total;
     $("winNext").style.display = last ? "none" : "";
     $("winNextFloat").style.display = last ? "none" : "";
     $("winOverlay").classList.remove("collapsed");
     $("winOverlay").classList.add("active");
   }
 
-  // ---------- 关卡选择列表 ----------
-  function buildLevelGrid(){
-    var g=$("levelGrid"); g.innerHTML="";
-    for(var lv=1; lv<=TOTAL_LEVELS; lv++){
+  // ---------- 首页：主题（剧情）列表 ----------
+  function buildThemeList(){
+    var g=$("themeList"); g.innerHTML="";
+    THEMES.forEach(function(t){
+      var tp=themeProg(t.id), total=t.pages.length;
+      var done=Math.min(tp.unlocked-1, total); if(tp.unlocked>total) done=total;
+      var card=document.createElement("div");
+      card.className="tcard";
+      card.innerHTML="<img class='cover' src='"+t.cover+"' alt='' loading='lazy'>"+
+        "<div class='t-body'><div><div class='t-title'>"+t.title+"</div>"+
+        "<div class='t-sub'>共 "+total+" 页"+(done>=total?" · 已完结 ✨":"")+"</div>"+
+        "<div class='t-bar'><i style='width:"+Math.round(done/total*100)+"%'></i></div></div>"+
+        "<div class='t-prog'><b>"+done+"</b>/"+total+"<div>阅读进度</div></div></div>";
+      card.addEventListener("click",function(){ openChapter(t.id); });
+      g.appendChild(card);
+    });
+  }
+
+  // ---------- 章节地图（路径节点 = 每一页） ----------
+  function openChapter(tid){
+    cur.tid=tid;
+    var theme=themeById(tid);
+    $("chapterTitle").textContent=theme.title;
+    var tp=themeProg(tid), total=theme.pages.length;
+    var g=$("mapCol"); g.innerHTML="";
+    for(var lv=1; lv<=total; lv++){
       (function(lv){
-        var grid=LEVELS[lv-1];
-        var unlocked=lv<=progress.unlocked;
-        var st=progress.stars[lv]||0;
-        var cell=document.createElement("div");
-        cell.className="lvcell"+(unlocked?"":" locked")+(st>0?" done":"");
-        cell.innerHTML="<div class='num'>"+lv+"</div>"+
-                       "<div class='grid'>"+grid.c+"×"+grid.r+"</div>"+
-                       "<div class='grid' style='font-size:9px;max-width:92%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>"+(grid.title||"")+"</div>"+
-                       (unlocked?"<div class='stars'>"+(st>0?"★★★".substr(0,st):"")+"</div>":"<div class='lock'>🔒</div>");
-        if(unlocked) cell.addEventListener("click",function(){ startLevel(lv); });
-        g.appendChild(cell);
+        var page=theme.pages[lv-1];
+        var unlocked=lv<=tp.unlocked;
+        var st=tp.stars[lv]||0;
+        var node=document.createElement("div");
+        var isCur=(lv===tp.unlocked && lv<=total && st===0);
+        node.className="mapnode"+(unlocked?(st>0?" done":(isCur?" cur":"")):" locked");
+        node.innerHTML="<div class='mcircle'>"+(unlocked?lv:"🔒")+"</div>"+
+          "<div class='minfo'>第 "+lv+" 页"+
+          "<div class='gridtxt'>"+page.c+"×"+page.r+"</div>"+
+          (st>0?"<div class='stars'>"+"★★★".substr(0,st)+"</div>":"")+"</div>";
+        if(unlocked) node.addEventListener("click",function(){ startPage(tid,lv); });
+        g.appendChild(node);
       })(lv);
     }
+    show("chapter");
   }
+
+  // ---------- 漫画阅读模式 ----------
+  var readerTid=null;
+  function openReader(tid, startIdx){
+    readerTid=tid;
+    var theme=themeById(tid), tp=themeProg(tid), total=theme.pages.length;
+    $("readerTitle").textContent=theme.title;
+    var track=$("readerTrack"); track.innerHTML="";
+    for(var i=0;i<total;i++){
+      (function(i){
+        var page=theme.pages[i], unlocked=(i+1)<=tp.unlocked;
+        var d=document.createElement("div");
+        d.className="rpage";
+        if(unlocked){
+          var im=document.createElement("img");
+          im.src=page.img; im.alt="第 "+(i+1)+" 页"; im.draggable=false;
+          d.appendChild(im);
+        }else{
+          d.innerHTML="<div class='rlock'><span class='big'>🔒</span>这一页还未解锁<br>拼完第 "+(i+1)+" 页就能看到啦</div>";
+        }
+        d.dataset.idx=i;
+        track.appendChild(d);
+      })(i);
+    }
+    $("reader").classList.add("active");
+    var idx=Math.max(0, Math.min(startIdx||0, total-1));
+    requestAnimationFrame(function(){ track.scrollLeft=idx*track.clientWidth; updReaderCap(); });
+  }
+  function updReaderCap(){
+    var track=$("readerTrack");
+    var w=track.clientWidth||1;
+    var i=Math.round(track.scrollLeft/w);
+    var theme=themeById(readerTid), tp=themeProg(readerTid), total=theme.pages.length;
+    if(i<0) i=0; if(i>total-1) i=total-1;
+    var unlocked=(i+1)<=tp.unlocked;
+    $("readerCapText").textContent = unlocked ? (theme.pages[i].caption||"") : "……";
+    $("readerPageNum").textContent = "第 "+(i+1)+" 页 / 共 "+total+" 页";
+  }
+  function closeReader(){ $("reader").classList.remove("active"); }
 
   // ---------- 图片加载：按需加载当前关 + 空闲时后台预取下一关 ----------
   // 关键优化：不再启动时全量下载所有图片。只加载当前要玩的那张；
@@ -696,30 +1001,45 @@
     im.onerror=function(){ delete IMG_CACHE[src]; };  // 失败允许重试
     im.src=src;
   }
-  // 浏览器空闲时预取接下来 1-2 关的图片（不影响当前操作）
-  function prefetchAhead(lv){
+  // 浏览器空闲时预取本主题接下来 1-2 页的图片（不影响当前操作）
+  function prefetchAhead(tid, lv){
     var run=function(){
-      for(var k=1;k<=2;k++){ var L=LEVELS[lv-1+k]; if(L) loadImage(L.img); }
+      var pages=themeById(tid).pages;
+      for(var k=1;k<=2;k++){ var L=pages[lv-1+k]; if(L) loadImage(L.img); }
     };
     if(window.requestIdleCallback) requestIdleCallback(run,{timeout:3000});
     else setTimeout(run,800);
   }
 
   // ---------- 事件绑定 ----------
-  $("btnContinue").addEventListener("click",function(){ startLevel(progress.unlocked); });
-  $("btnSelect").addEventListener("click",function(){ buildLevelGrid(); show("select"); });
   $("btnReset").addEventListener("click",function(){
-    if(confirm("确定重置所有进度？")){ progress={unlocked:1,stars:{}}; saveProgress(progress); alert("已重置"); }
+    if(confirm("确定重置所有进度？")){ progress=defaultProg(); saveProgress(progress); buildThemeList(); alert("已重置"); }
   });
-  $("selBack").addEventListener("click",function(){ show("home"); });
-  $("gameBack").addEventListener("click",function(){ clearInterval(cur.timer); buildLevelGrid(); show("select"); });
+  $("chapterBack").addEventListener("click",function(){ buildThemeList(); show("home"); });
+  $("gameBack").addEventListener("click",function(){ clearInterval(cur.timer); openChapter(cur.tid); });
+  $("btnReader").addEventListener("click",function(){
+    var tp=themeProg(cur.tid);
+    openReader(cur.tid, Math.max(0,Math.min(tp.unlocked, curTheme().pages.length)-1));
+  });
+  $("readerClose").addEventListener("click",closeReader);
+  $("readerTrack").addEventListener("scroll",function(){
+    clearTimeout(this._t); var self=this; this._t=setTimeout(updReaderCap,60);
+  });
   $("btnSound").addEventListener("click",function(){
     var m=!Sound.isMuted();
     Sound.setMuted(m);
     this.classList.toggle("muted",m);
     this.title = m ? "音效：关" : "音效：开";
   });
-  $("btnRestart").addEventListener("click",function(){ startLevel(cur.lv); });
+  // 动效开关（粒子/撒花/震动/星级动画）
+  var btnFx=$("btnFx");
+  if(!fxOn) btnFx.classList.add("muted");
+  btnFx.addEventListener("click",function(){
+    fxOn=!fxOn; saveFx();
+    this.classList.toggle("muted",!fxOn);
+    this.title = fxOn ? "动效：开" : "动效：关";
+  });
+  $("btnRestart").addEventListener("click",function(){ startPage(cur.tid, cur.lv); });
   $("btnHint").addEventListener("click",hint);
 
   // 看原图：按住显示
@@ -731,10 +1051,10 @@
   peekEl.addEventListener("pointerleave",peekOff);
   peekOv.addEventListener("pointerup",peekOff);
 
-  $("winReplay").addEventListener("click",function(){ $("winOverlay").classList.remove("active"); startLevel(cur.lv); });
-  $("winNext").addEventListener("click",function(){ $("winOverlay").classList.remove("active"); startLevel(Math.min(cur.lv+1,TOTAL_LEVELS)); });
-  $("winNextFloat").addEventListener("click",function(){ $("winOverlay").classList.remove("active"); startLevel(Math.min(cur.lv+1,TOTAL_LEVELS)); });
-  $("winSelect").addEventListener("click",function(){ $("winOverlay").classList.remove("active"); buildLevelGrid(); show("select"); });
+  $("winReplay").addEventListener("click",function(){ $("winOverlay").classList.remove("active"); startPage(cur.tid, cur.lv); });
+  $("winNext").addEventListener("click",function(){ $("winOverlay").classList.remove("active"); startPage(cur.tid, Math.min(cur.lv+1, curPages().length)); });
+  $("winNextFloat").addEventListener("click",function(){ $("winOverlay").classList.remove("active"); startPage(cur.tid, Math.min(cur.lv+1, curPages().length)); });
+  $("winSelect").addEventListener("click",function(){ $("winOverlay").classList.remove("active"); openChapter(cur.tid); });
   // 收起 sheet 进入「欣赏模式」；欣赏时点击图片区域再把 sheet 升回来
   $("winCollapse").addEventListener("click",function(){ $("winOverlay").classList.add("collapsed"); });
   $("winScrim").addEventListener("click",function(){ if($("winOverlay").classList.contains("collapsed")) $("winOverlay").classList.remove("collapsed"); });
@@ -745,9 +1065,10 @@
     if(screens.game.classList.contains("active")){ clearTimeout(rzT); rzT=setTimeout(render,150); }
   });
 
-  // 初始：不再全量预载图片。只读清单；图片在真正开始某一关时才按需下载。
+  // 初始：不再全量预载图片。先读清单再渲染主题列表；图片在真正开始某一页时才按需下载。
   show("home");
-  loadManifest().then(function(){ if(screens.select.classList.contains("active")) buildLevelGrid(); });
+  buildThemeList();
+  loadManifest().then(function(){ if(screens.home.classList.contains("active")) buildThemeList(); });
 
   // 注册 Service Worker：缓存已访问的图片，二刷/重玩秒开、支持离线（渐进增强，失败不影响游戏）
   if("serviceWorker" in navigator){
