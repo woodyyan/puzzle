@@ -1,6 +1,23 @@
 {
   "themes": [
     {
+      "id": "deep",
+      "title": "深海灯火",
+      "cover": "images/deep/p07.webp",
+      "pages": [
+        {"img":"images/deep/p01.webp","c":7,"r":7,"caption":"海底的珊瑚村庄，被「灯之心」温暖地照亮着。"},
+        {"img":"images/deep/p02.webp","c":7,"r":7,"caption":"那一夜，灯之心突然熄灭了。"},
+        {"img":"images/deep/p03.webp","c":7,"r":8,"caption":"它带着母亲的护身珠，独自游向深处。"},
+        {"img":"images/deep/p04.webp","c":7,"r":9,"caption":"途中，它穿过了沉睡百年的沉船。"},
+        {"img":"images/deep/p05.webp","c":7,"r":8,"caption":"海沟深处，有什么东西正盯着它。"},
+        {"img":"images/deep/p06.webp","c":7,"r":7,"caption":"在最深最黑的地方，它几乎放弃了。"},
+        {"img":"images/deep/p07.webp","c":8,"r":10,"caption":"就在那时，一群水母亮起了。"},
+        {"img":"images/deep/p08.webp","c":8,"r":10,"caption":"传说中的火种，就在祭坛中央。"},
+        {"img":"images/deep/p09.webp","c":8,"r":11,"caption":"取走火种的代价，是献出最珍贵的东西。"},
+        {"img":"images/deep/p10.webp","c":9,"r":12,"caption":"从此，整片海都记得那颗珠子的光。"}
+      ]
+    },
+    {
       "id": "bakery",
       "title": "森林面包房的四季",
       "cover": "images/bakery/p01.webp",

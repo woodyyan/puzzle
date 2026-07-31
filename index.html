@@ -183,10 +183,11 @@
   /* ---------- 主题列表（首页） ---------- */
   .themelist{flex:1 1 auto; overflow-y:auto; display:flex; flex-direction:column; gap:12px; padding:6px 2px 10px; min-height:0}
   .tcard{background:var(--panel); border-radius:20px; overflow:hidden; box-shadow:var(--shadow);
-    border:1px solid var(--line); cursor:pointer; transition:transform .1s ease}
+    border:1px solid var(--line); cursor:pointer; transition:transform .1s ease;
+    display:flex; flex-direction:column; flex:0 0 auto}
   .tcard:active{transform:scale(.98)}
-  .tcard .cover{width:100%; height:clamp(96px,15vh,130px); object-fit:cover; display:block; background:var(--seam)}
-  .tcard .t-body{display:flex; align-items:center; gap:10px; padding:10px 14px}
+  .tcard .cover{width:100%; height:clamp(72px,11vh,120px); object-fit:cover; display:block; background:var(--seam); flex:0 0 auto}
+  .tcard .t-body{display:flex; align-items:center; gap:10px; padding:9px 14px 11px; flex:0 0 auto}
   .tcard .t-title{font-weight:800; font-size:16px}
   .tcard .t-sub{font-size:11px; color:var(--muted); margin-top:2px}
   .tcard .t-prog{margin-left:auto; text-align:right; font-size:12px; color:var(--muted); flex:0 0 auto}
@@ -370,7 +371,20 @@
     {img:"images/sky/p09.webp",c:8,r:11,caption:"传说中的宝藏，竟然是一袋会发光的种子。"},
     {img:"images/sky/p10.webp",c:9,r:12,caption:"把宝藏种下去的地方，会长出新的故事。"}
   ];
+  var DEEP_PAGES = [
+    {img:"images/deep/p01.webp",c:7,r:7,caption:"海底的珊瑚村庄，被「灯之心」温暖地照亮着。"},
+    {img:"images/deep/p02.webp",c:7,r:7,caption:"那一夜，灯之心突然熄灭了。"},
+    {img:"images/deep/p03.webp",c:7,r:8,caption:"它带着母亲的护身珠，独自游向深处。"},
+    {img:"images/deep/p04.webp",c:7,r:9,caption:"途中，它穿过了沉睡百年的沉船。"},
+    {img:"images/deep/p05.webp",c:7,r:8,caption:"海沟深处，有什么东西正盯着它。"},
+    {img:"images/deep/p06.webp",c:7,r:7,caption:"在最深最黑的地方，它几乎放弃了。"},
+    {img:"images/deep/p07.webp",c:8,r:10,caption:"就在那时，一群水母亮起了。"},
+    {img:"images/deep/p08.webp",c:8,r:10,caption:"传说中的火种，就在祭坛中央。"},
+    {img:"images/deep/p09.webp",c:8,r:11,caption:"取走火种的代价，是献出最珍贵的东西。"},
+    {img:"images/deep/p10.webp",c:9,r:12,caption:"从此，整片海都记得那颗珠子的光。"}
+  ];
   var FALLBACK_THEMES = [
+    {id:"deep", title:"深海灯火", cover:"images/deep/p07.webp", pages:DEEP_PAGES},
     {id:"bakery", title:"森林面包房的四季", cover:"images/bakery/p01.webp", pages:BAKERY_PAGES},
     {id:"sky", title:"天空岛寻宝记", cover:"images/sky/p03.webp", pages:SKY_PAGES},
     {id:"classic", title:"四季物语 · 经典图库", cover:"images/village1.webp", pages:CLASSIC_PAGES}
