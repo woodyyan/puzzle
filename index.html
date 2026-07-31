@@ -92,12 +92,13 @@
   .hud .spacer{flex:1 1 auto; min-width:6px}
   /* iPhone 14 等窄屏：适度收紧但保留芯片最小宽度，确保用时不被裁成省略号 */
   @media (max-width:400px){
-    .hud{gap:6px}
-    .hud .stat{min-width:62px; padding:6px 6px; gap:5px}
-    .hud .stat.time{min-width:82px}
+    .hud{gap:5px}
+    .hud .stat{min-width:56px; padding:6px 5px; gap:5px}
+    .hud .stat.time{min-width:76px}
     .hud .stat .s-ico{font-size:14px}
     .hud .stat .s-body b{font-size:14px}
     .hud .stat .s-body em{font-size:9px}
+    .hud .iconbtn{width:36px; height:36px; flex-basis:36px}
   }
   .boardwrap{flex:1 1 auto; display:flex; align-items:center; justify-content:center; min-height:0; overflow:hidden; padding:2px 0; position:relative}
   .board{
@@ -180,12 +181,12 @@
     100%{transform:scale(1) rotate(0); opacity:1}}
 
   /* ---------- 主题列表（首页） ---------- */
-  .themelist{flex:1 1 auto; overflow-y:auto; display:flex; flex-direction:column; gap:14px; padding:8px 2px 24px; min-height:0}
+  .themelist{flex:1 1 auto; overflow-y:auto; display:flex; flex-direction:column; gap:12px; padding:6px 2px 10px; min-height:0}
   .tcard{background:var(--panel); border-radius:20px; overflow:hidden; box-shadow:var(--shadow);
     border:1px solid var(--line); cursor:pointer; transition:transform .1s ease}
   .tcard:active{transform:scale(.98)}
-  .tcard .cover{width:100%; height:150px; object-fit:cover; display:block; background:var(--seam)}
-  .tcard .t-body{display:flex; align-items:center; gap:10px; padding:12px 16px}
+  .tcard .cover{width:100%; height:clamp(96px,15vh,130px); object-fit:cover; display:block; background:var(--seam)}
+  .tcard .t-body{display:flex; align-items:center; gap:10px; padding:10px 14px}
   .tcard .t-title{font-weight:800; font-size:16px}
   .tcard .t-sub{font-size:11px; color:var(--muted); margin-top:2px}
   .tcard .t-prog{margin-left:auto; text-align:right; font-size:12px; color:var(--muted); flex:0 0 auto}
@@ -260,6 +261,7 @@
   <!-- Game -->
   <section id="game" class="screen">
     <div class="hud">
+      <button class="iconbtn" id="gameBack" title="返回">‹</button>
       <div class="stat"><span class="s-ico">🏁</span><span class="s-body"><b id="hudLevel">1</b><em>关卡</em></span></div>
       <div class="stat"><span class="s-ico">👣</span><span class="s-body"><b id="hudMoves">0</b><em>步数</em></span></div>
       <div class="stat time"><span class="s-ico">⏱️</span><span class="s-body"><b id="hudTime">0:00</b><em>用时</em></span></div>
@@ -269,7 +271,6 @@
         <svg class="ico-off" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><line x1="16" y1="9" x2="21" y2="15"/><line x1="21" y1="9" x2="16" y2="15"/></svg>
       </button>
       <button class="iconbtn" id="btnFx" title="动效：开" aria-label="动效开关">✨</button>
-      <button class="iconbtn" id="gameBack" title="返回">‹</button>
     </div>
     <div class="boardwrap"><div class="board" id="board"></div><div class="fxlayer" id="fxLayer"></div></div>
     <div class="footer">
