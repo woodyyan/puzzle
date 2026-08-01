@@ -1,6 +1,25 @@
 {
   "themes": [
     {
+      "id": "toys",
+      "title": "玩具店午夜失踪案",
+      "cover": "images/toys/p11.webp",
+      "pages": [
+        {"img":"images/toys/p01.webp","c":7,"r":7,"caption":"午夜的钟声一响，玩具们发现泰迪不见了。"},
+        {"img":"images/toys/p02.webp","c":7,"r":7,"caption":"小锡兵说：大家分头找！"},
+        {"img":"images/toys/p03.webp","c":7,"r":8,"caption":"铁皮火车搜遍了每一条轨道。"},
+        {"img":"images/toys/p04.webp","c":7,"r":8,"caption":"洋娃娃摇摇头：整晚都没见过它。"},
+        {"img":"images/toys/p05.webp","c":7,"r":9,"caption":"床底下，找到了几缕棕色的毛。"},
+        {"img":"images/toys/p06.webp","c":7,"r":9,"caption":"花猫说，阁楼上好像有声音。"},
+        {"img":"images/toys/p07.webp","c":8,"r":10,"caption":"阁楼的黑暗里，有一双熟悉的眼睛。"},
+        {"img":"images/toys/p08.webp","c":8,"r":10,"caption":"原来，泰迪是自己藏起来的。"},
+        {"img":"images/toys/p09.webp","c":8,"r":11,"caption":"它小声说：我不想离开奶奶。"},
+        {"img":"images/toys/p10.webp","c":8,"r":11,"caption":"“傻孩子，你永远都是我的。”"},
+        {"img":"images/toys/p11.webp","c":8,"r":12,"caption":"那晚，玩具店开了一场回家派对。"},
+        {"img":"images/toys/p12.webp","c":9,"r":12,"caption":"第二天早上，一切如常，又不太一样了。"}
+      ]
+    },
+    {
       "id": "desert",
       "title": "沙海驼铃",
       "cover": "images/desert/p02.webp",
