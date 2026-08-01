@@ -1,6 +1,25 @@
 {
   "themes": [
     {
+      "id": "desert",
+      "title": "沙海驼铃",
+      "cover": "images/desert/p02.webp",
+      "pages": [
+        {"img":"images/desert/p01.webp","c":7,"r":7,"caption":"月牙村的水井干了，驼队带着全村的水出发。"},
+        {"img":"images/desert/p02.webp","c":7,"r":7,"caption":"沙丘一座连着一座，像永远走不到头。"},
+        {"img":"images/desert/p03.webp","c":7,"r":8,"caption":"沙暴来的时候，连天空都被吃掉了。"},
+        {"img":"images/desert/p04.webp","c":7,"r":8,"caption":"水，只剩下最后半袋了。"},
+        {"img":"images/desert/p05.webp","c":7,"r":9,"caption":"废墟里的这口老井，救了他们的命。"},
+        {"img":"images/desert/p06.webp","c":7,"r":9,"caption":"老骆驼说，迷路了就看天上的星星。"},
+        {"img":"images/desert/p07.webp","c":8,"r":10,"caption":"那不是绿洲，是沙漠撒的谎。"},
+        {"img":"images/desert/p08.webp","c":8,"r":10,"caption":"老骆驼把最后一口水，推到了它面前。"},
+        {"img":"images/desert/p09.webp","c":8,"r":11,"caption":"快看！那里有树！"},
+        {"img":"images/desert/p10.webp","c":8,"r":11,"caption":"月牙村，终于等到水了。"},
+        {"img":"images/desert/p11.webp","c":8,"r":12,"caption":"那天夜里，沙漠下了一场雨。"},
+        {"img":"images/desert/p12.webp","c":9,"r":12,"caption":"从此，小沙狐成了新的引路人。"}
+      ]
+    },
+    {
       "id": "deep",
       "title": "深海灯火",
       "cover": "images/deep/p07.webp",
