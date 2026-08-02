@@ -1,6 +1,25 @@
 {
   "themes": [
     {
+      "id": "jungle",
+      "title": "雨林清晨音乐会",
+      "cover": "images/jungle/p11.webp",
+      "pages": [
+        {"img":"images/jungle/p01.webp","c":7,"r":7,"caption":"雨林一年一度的清晨音乐会，就要开场了。"},
+        {"img":"images/jungle/p02.webp","c":7,"r":7,"caption":"可是，主唱百灵鸟不见了。"},
+        {"img":"images/jungle/p03.webp","c":7,"r":8,"caption":"小青蛙背起鼓，顺着藤蔓小路去找。"},
+        {"img":"images/jungle/p04.webp","c":7,"r":8,"caption":"老乌龟说，昨晚的歌声往上游去了。"},
+        {"img":"images/jungle/p05.webp","c":7,"r":9,"caption":"蝴蝶在前面带路，它一点都不怕了。"},
+        {"img":"images/jungle/p06.webp","c":7,"r":9,"caption":"花丛里，躺着一根熟悉的羽毛。"},
+        {"img":"images/jungle/p07.webp","c":8,"r":10,"caption":"蜻蜓说，它飞进了回音溪谷。"},
+        {"img":"images/jungle/p08.webp","c":8,"r":10,"caption":"溪谷深处，传来沙哑的歌声。"},
+        {"img":"images/jungle/p09.webp","c":8,"r":11,"caption":"原来，它偷偷练歌，把嗓子练哑了。"},
+        {"img":"images/jungle/p10.webp","c":8,"r":11,"caption":"小青蛙什么也没说，只是敲起了鼓。"},
+        {"img":"images/jungle/p11.webp","c":8,"r":12,"caption":"那场音乐会，是大家一起唱完的。"},
+        {"img":"images/jungle/p12.webp","c":9,"r":12,"caption":"它们约好，明年一起写一首新的歌。"}
+      ]
+    },
+    {
       "id": "toys",
       "title": "玩具店午夜失踪案",
       "cover": "images/toys/p11.webp",
