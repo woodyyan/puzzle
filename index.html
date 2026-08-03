@@ -14,7 +14,9 @@
     --shadow-sm:0 3px 10px rgba(120,90,60,.10);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{margin:0;height:100%}
+  html,body{margin:0;height:100%; overscroll-behavior-x:none}
+  /* 禁止横向 overscroll 触发浏览器前进/后退手势（Chrome/安卓有效） */
+  html,body{overscroll-behavior:none; overscroll-behavior-x:none}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     background:radial-gradient(125% 90% at 50% 0%, #fbf7f1 0%, #efe8dd 100%);
@@ -623,7 +625,8 @@
   function show(name){ for(var k in screens){ screens[k].classList.toggle("active",k===name);} }
 
   // ---------- 游戏状态 ----------
-  var cur={tid:"bakery",lv:1,c:3,r:3,n:9,slots:[],moves:0,t0:0,timer:null,img:"",
+  var cur={tid:"bakery",lv:1,c:3,r:3,n:9,slots:[],moves:0,timer:null,img:"",
+           elapsedMs:0,runningSince:0,timerRunning:false,completed:false,
            groups:[],groupId:[],cellW:0,cellH:0};
   function curTheme(){ return themeById(cur.tid); }
   function curPages(){ return curTheme().pages; }
@@ -648,7 +651,7 @@
     cur.c=g.c; cur.r=g.r; cur.n=g.c*g.r;
     var order=[]; for(var i=0;i<cur.n;i++) order.push(i);
     do{ shuffle(order); }while(isSolved(order));
-    cur.slots=order; cur.moves=0; combo=0;   // 新关卡：连击清零
+    cur.slots=order; cur.moves=0; combo=0; cur.completed=false;   // 新关卡：连击清零
     $("hudLevel").textContent=lv;
     $("hudMoves").textContent=0;
     $("peekImg").src=cur.img;
@@ -658,13 +661,37 @@
     buildBoard();
   }
 
+  // ---------- 计时：仅计算页面可见且正在游戏的时段 ----------
+  // 不用“当前时间 - 开局时间”，避免 Safari/Chrome 退到后台期间也被计入。
   function startTimer(){
-    cur.t0=Date.now();
     if(cur.timer) clearInterval(cur.timer);
-    cur.timer=setInterval(updTime,1000); updTime();
+    cur.elapsedMs=0;
+    cur.runningSince=Date.now();
+    cur.timerRunning=true;
+    cur.timer=setInterval(updTime,1000);
+    updTime();
   }
+  function elapsedNow(){
+    return cur.elapsedMs + (cur.timerRunning ? Date.now()-cur.runningSince : 0);
+  }
+  function pauseTimer(){
+    if(!cur.timerRunning) return;
+    cur.elapsedMs += Date.now()-cur.runningSince;
+    cur.timerRunning=false;
+    if(cur.timer){ clearInterval(cur.timer); cur.timer=null; }
+    updTime();
+  }
+  function resumeTimer(){
+    if(cur.timerRunning || cur.completed || !screens.game.classList.contains("active")) return;
+    cur.runningSince=Date.now();
+    cur.timerRunning=true;
+    if(cur.timer) clearInterval(cur.timer);
+    cur.timer=setInterval(updTime,1000);
+    updTime();
+  }
+  function stopTimer(){ pauseTimer(); }
   function updTime(){
-    var s=Math.floor((Date.now()-cur.t0)/1000);
+    var s=Math.floor(elapsedNow()/1000);
     var m=Math.floor(s/60); s=s%60;
     $("hudTime").textContent=m+":"+(s<10?"0":"")+s;
   }
@@ -944,7 +971,8 @@
     return 1;
   }
   function win(){
-    clearInterval(cur.timer);
+    pauseTimer();
+    cur.completed=true;
     var theme=curTheme(), total=theme.pages.length, page=theme.pages[cur.lv-1];
     var tp=themeProg(cur.tid);
     var st=starsFor(cur.moves,cur.n);
@@ -1095,7 +1123,7 @@
     if(confirm("确定重置所有进度？")){ progress=defaultProg(); saveProgress(progress); buildThemeList(); alert("已重置"); }
   });
   $("chapterBack").addEventListener("click",function(){ buildThemeList(); show("home"); });
-  $("gameBack").addEventListener("click",function(){ clearInterval(cur.timer); openChapter(cur.tid); });
+  $("gameBack").addEventListener("click",function(){ stopTimer(); openChapter(cur.tid); });
   $("btnReader").addEventListener("click",function(){
     var tp=themeProg(cur.tid);
     openReader(cur.tid, Math.max(0,Math.min(tp.unlocked, curTheme().pages.length)-1));
@@ -1137,6 +1165,36 @@
   // 收起 sheet 进入「欣赏模式」；欣赏时点击图片区域再把 sheet 升回来
   $("winCollapse").addEventListener("click",function(){ $("winOverlay").classList.add("collapsed"); });
   $("winScrim").addEventListener("click",function(){ if($("winOverlay").classList.contains("collapsed")) $("winOverlay").classList.remove("collapsed"); });
+
+  // ---------- 浏览器/系统生命周期：离开 Safari/Chrome 或切到后台时自动暂停计时 ----------
+  // iOS Safari 通常触发 visibilitychange；Page Lifecycle 事件作为兼容兜底。
+  function onPageVisibility(){
+    if(document.hidden) pauseTimer();
+    else resumeTimer();
+  }
+  document.addEventListener("visibilitychange",onPageVisibility);
+  window.addEventListener("pagehide",pauseTimer);
+  window.addEventListener("freeze",pauseTimer);
+  window.addEventListener("pageshow",resumeTimer);
+
+  // ---------- 游戏内拦截左缘右滑 ----------
+  // Safari/Chrome 的系统级“边缘返回”无法由网页 100% 关闭；这里在拼图界面捕获手势，
+  // 优先吃掉从最左 24px 向右的触摸移动，配合 CSS overscroll-behavior-x:none 避免中断游戏。
+  var edgeSwipeStartX=null, edgeSwipeStartY=null;
+  document.addEventListener("touchstart",function(e){
+    if(!screens.game.classList.contains("active") || !e.touches || !e.touches.length) return;
+    var t=e.touches[0];
+    edgeSwipeStartX=t.clientX; edgeSwipeStartY=t.clientY;
+  },{passive:true,capture:true});
+  document.addEventListener("touchmove",function(e){
+    if(edgeSwipeStartX===null || !e.touches || !e.touches.length) return;
+    var t=e.touches[0], dx=t.clientX-edgeSwipeStartX, dy=t.clientY-edgeSwipeStartY;
+    // 只吞最左缘向右的水平手势；棋盘其余位置的拖动完全不受影响。
+    if(edgeSwipeStartX<=24 && dx>0 && Math.abs(dx)>=Math.abs(dy)) e.preventDefault();
+  },{passive:false,capture:true});
+  function clearEdgeSwipe(){ edgeSwipeStartX=null; edgeSwipeStartY=null; }
+  document.addEventListener("touchend",clearEdgeSwipe,{passive:true,capture:true});
+  document.addEventListener("touchcancel",clearEdgeSwipe,{passive:true,capture:true});
 
   // 屏幕尺寸变化时重新计算切片与缝隙
   var rzT;
