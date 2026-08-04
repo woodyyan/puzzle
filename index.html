@@ -455,7 +455,22 @@
     {img:"images/mail/p11.webp",c:8,r:12,caption:"每一封被准时送达的信，都变成了一盏灯。"},
     {img:"images/mail/p12.webp",c:9,r:12,caption:"第二天，它带着第一封属于自己的信，再次出发。"}
   ];
+  var BALLOON_PAGES = [
+    {img:"images/balloon/p01.webp",c:7,r:7,caption:"清晨的草原上，热气球邮差小满把最后一封没写名字的信装进帆布邮包。"},
+    {img:"images/balloon/p02.webp",c:7,r:7,caption:"信上只有一个泛黄的地址：对面山丘，日落前送到。她升起热气球出发。"},
+    {img:"images/balloon/p03.webp",c:7,r:8,caption:"半路气流变得古怪，彩色丘陵在雾里若隐若现，指南针的指针乱转。"},
+    {img:"images/balloon/p04.webp",c:7,r:8,caption:"一阵怪风把邮包吹散，那封信飘向深谷，小满扑过去却没抓住。"},
+    {img:"images/balloon/p05.webp",c:7,r:9,caption:"她抓住藤蔓滑下山谷，在花丛里找回了信，也发现谷底一座被遗忘的小驿站。"},
+    {img:"images/balloon/p06.webp",c:7,r:9,caption:"驿站里挂着一排停摆的旧热气球，墙上贴满无人认领的信。小满觉得有点眼熟。"},
+    {img:"images/balloon/p07.webp",c:8,r:10,caption:"翻到一本发黄的登记簿，她认出了字迹——那是小时候的自己，和走散的伙伴阿野的约定。"},
+    {img:"images/balloon/p08.webp",c:8,r:10,caption:"原来这封信是多年前的阿野写给她的，被风一直藏着。她顺着线索找到丘陵另一边那盏还亮着的小灯。"},
+    {img:"images/balloon/p09.webp",c:8,r:11,caption:"灯下坐着一位白发老人，抬头一笑——正是长大后的阿野，他每年都来这里等信。"},
+    {img:"images/balloon/p10.webp",c:8,r:11,caption:"两人把旧热气球重新充满气，把积压多年的信一封封系上彩带。"},
+    {img:"images/balloon/p11.webp",c:8,r:12,caption:"黄昏，无数小灯笼从热气球上缓缓升空，把整片草原照成温柔的星海。"},
+    {img:"images/balloon/p12.webp",c:9,r:12,caption:"小满和阿野在金色草原上并肩坐下，把那封迟到了多年的信，轻轻读给对方听。"}
+  ];
   var FALLBACK_THEMES = [
+    {id:"balloon", title:"草原热气球邮差", cover:"images/balloon/p01.webp", pages:BALLOON_PAGES},
     {id:"mail", title:"云端邮局的最后包裹", cover:"images/mail/p01.webp", pages:MAIL_PAGES},
     {id:"jungle", title:"雨林清晨音乐会", cover:"images/jungle/p11.webp", pages:JUNGLE_PAGES},
     {id:"toys", title:"玩具店午夜失踪案", cover:"images/toys/p11.webp", pages:TOYS_PAGES},
@@ -993,7 +1008,7 @@
     var st=starsFor(cur.moves,cur.n);
     var prev=tp.stars[cur.lv]||0;
     if(st>prev) tp.stars[cur.lv]=st;
-    if(cur.lv+1>tp.unlocked && cur.lv<total) tp.unlocked=cur.lv+1;
+    if(cur.lv+1>tp.unlocked) tp.unlocked=cur.lv+1;   // 通关最后一页也要把 unlocked 推进到 total+1，否则首页进度会少算最后一页
     saveProgress(progress);
     Sound.win();
     confetti();                            // 撒花
