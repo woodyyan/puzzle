@@ -1,6 +1,25 @@
 {
   "themes": [
     {
+      "id": "library",
+      "title": "会走路的图书馆",
+      "cover": "images/library/p01.webp",
+      "pages": [
+        {"img":"images/library/p01.webp","c":7,"r":7,"caption":"一座长着四条木腿的巨型图书馆走进山谷小镇，孩子们举着书欢呼着跑出来迎接它。"},
+        {"img":"images/library/p02.webp","c":7,"r":7,"caption":"管理员阿狸摇响铜铃，旋转书梯缓缓展开，全镇人排起队来借书。"},
+        {"img":"images/library/p03.webp","c":7,"r":8,"caption":"图书馆过桥时脚下一滑，书页从窗户里飞了出来，阿狸紧紧抓住栏杆。"},
+        {"img":"images/library/p04.webp","c":7,"r":8,"caption":"黄昏时分，书架开始掉页，一根横梁上出现了裂纹，阿狸提着灯摸了摸裂缝。"},
+        {"img":"images/library/p05.webp","c":7,"r":9,"caption":"图书馆慢慢跪倒在花田里，四条腿收拢，村民们带着毯子和梯子围了上来。"},
+        {"img":"images/library/p06.webp","c":7,"r":9,"caption":"阿狸爬进最深处的心室：齿轮、铜管、水晶管环绕，正中央的木质摇篮空着，只有一块铜牌。"},
+        {"img":"images/library/p07.webp","c":8,"r":10,"caption":"她翻开借阅登记簿，一行发光的字迹浮现——原来图书馆的心脏是一本多年前被借走未还的《漫游志》。"},
+        {"img":"images/library/p08.webp","c":8,"r":10,"caption":"阿狸出发寻找那本书，穿过集市、渡船和金色麦田，一路问遍了所有人。"},
+        {"img":"images/library/p09.webp","c":8,"r":11,"caption":"在山坡花房里，她看到一本厚厚的《漫游志》被压在窗台上做花夹，旁边站着一位白发老人和他的小孙女。"},
+        {"img":"images/library/p10.webp","c":8,"r":11,"caption":"老人翻开书，里面夹着他亡妻的亲笔批注和一封没寄出的道歉信，他一直舍不得还回去。"},
+        {"img":"images/library/p11.webp","c":8,"r":12,"caption":"全镇人一起把书送回心室的摇篮里，金光从齿轮间迸发，图书馆的木腿重新舒展开来。"},
+        {"img":"images/library/p12.webp","c":9,"r":12,"caption":"图书馆长出了书页做的叶子，变成了孩子们最爱爬的书之树；老人成了新管理员，阿狸笑着站在阳台上挥手。"}
+      ]
+    },
+    {
       "id": "balloon",
       "title": "草原热气球邮差",
       "cover": "images/balloon/p01.webp",
