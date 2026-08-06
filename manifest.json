@@ -1,6 +1,25 @@
 {
   "themes": [
     {
+      "id": "robot",
+      "title": "铁皮机器人的发条曲",
+      "cover": "images/robot/p01.webp",
+      "pages": [
+        {"img":"images/robot/p01.webp","c":7,"r":7,"caption":"小镇旧机器人工坊里，时钟机器人和扫帚机器人叮叮当当忙个不停，角落里的老机器人却总卡壳冒烟。"},
+        {"img":"images/robot/p02.webp","c":7,"r":7,"caption":"学徒小铁给老机器人上发条，可它刚走两步就咔哒一声停住，原地转起了圈。"},
+        {"img":"images/robot/p03.webp","c":7,"r":8,"caption":"爷爷摇摇头，在工坊门口贴出告示：下个月把这台老机器人卖掉换新的。"},
+        {"img":"images/robot/p04.webp","c":7,"r":8,"caption":"小铁舍不得，夜里提着灯溜进工坊，给老机器人擦锈、上油、拧紧松掉的螺丝。"},
+        {"img":"images/robot/p05.webp","c":7,"r":9,"caption":"老机器人还是老样子，小铁却发现它胸口藏着一只小小的八音盒，里面刻着模糊的字。"},
+        {"img":"images/robot/p06.webp","c":7,"r":9,"caption":"他在仓库翻箱倒柜，找到了爷爷年轻时的手风琴和一张泛黄的乐谱《发条圆舞曲》。"},
+        {"img":"images/robot/p07.webp","c":8,"r":10,"caption":"第二天收废铁的人来拉老机器人，小铁哭着抱住它的腿不让走。"},
+        {"img":"images/robot/p08.webp","c":8,"r":10,"caption":"就在这时老机器人胸口的八音盒突然奏响，正是那首《发条圆舞曲》——金灿灿的音符飘满了整条街。"},
+        {"img":"images/robot/p09.webp","c":8,"r":11,"caption":"原来它不是坏了，它一直悄悄储存能量、把爷爷年轻时写的曲子刻进八音盒；旋律飘出工坊，全镇人都围了过来。"},
+        {"img":"images/robot/p10.webp","c":8,"r":11,"caption":"爷爷摘下「售出」的牌子，当晚工坊变成了音乐角，所有铁皮机器人叮叮当当跟着伴奏。"},
+        {"img":"images/robot/p11.webp","c":8,"r":12,"caption":"收废铁的人也被感动，把货车里的旧零件全捐给工坊，说要让更多机器人「活」过来。"},
+        {"img":"images/robot/p12.webp","c":9,"r":12,"caption":"黄昏的工坊门口，老机器人轻轻奏着歌，小铁靠着它的肩，爷爷坐在摇椅里笑着合上了眼。"}
+      ]
+    },
+    {
       "id": "candy",
       "title": "糖果工坊的苦味谜团",
       "cover": "images/candy/p01.webp",
