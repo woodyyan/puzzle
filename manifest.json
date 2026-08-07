@@ -1,6 +1,25 @@
 {
   "themes": [
     {
+      "id": "bamboo",
+      "title": "熊猫与麻雀的飞行梦",
+      "cover": "images/bamboo/p01.webp",
+      "pages": [
+        {"img":"images/bamboo/p01.webp","c":7,"r":7,"caption":"竹林里，熊猫阿滚滚仰头望着天空，看麻雀阿啾飞来飞去，满眼都是羡慕。"},
+        {"img":"images/bamboo/p02.webp","c":7,"r":7,"caption":"阿啾落在它头顶问它怎么了，它说想飞，阿啾拍拍翅膀：「来，我教你飞！」"},
+        {"img":"images/bamboo/p03.webp","c":7,"r":8,"caption":"第一次，阿滚滚站上竹梢往下跳，咚的一声摔进了竹叶堆里。"},
+        {"img":"images/bamboo/p04.webp","c":7,"r":8,"caption":"第二次，它绑上竹叶翅膀跑起来，结果滚成了一个大球，一路滚到水潭边。"},
+        {"img":"images/bamboo/p05.webp","c":7,"r":9,"caption":"第三次，它从陡坡滑翔，还是直直坠进竹叶堆，阿啾也累得扑腾不动了。"},
+        {"img":"images/bamboo/p06.webp","c":7,"r":9,"caption":"阿滚滚泄了气，躲到竹屋后面，觉得自己太重，这辈子都飞不起来。"},
+        {"img":"images/bamboo/p07.webp","c":8,"r":10,"caption":"阿啾找了它很久，在竹丛里找到它，轻声说：飞不飞都没关系，你是我最好的朋友。"},
+        {"img":"images/bamboo/p08.webp","c":8,"r":10,"caption":"阿啾带它去荡竹秋千，荡到最高点时阿滚滚松开手——它「飘」了出去，划过水潭上空。"},
+        {"img":"images/bamboo/p09.webp","c":8,"r":11,"caption":"原来它天生就适合「荡着飞」，竹子就是它的翅膀，它第一次尝到了飞的感觉。"},
+        {"img":"images/bamboo/p10.webp","c":8,"r":11,"caption":"阿啾教它摆腿、松手、看落点，阿滚滚一次次荡出去，越荡越远、越荡越稳。"},
+        {"img":"images/bamboo/p11.webp","c":8,"r":12,"caption":"竹林飞行节那天，阿滚滚从竹秋千上荡出最远的一道弧线，小动物们在下面欢呼，阿啾在旁边当裁判。"},
+        {"img":"images/bamboo/p12.webp","c":9,"r":12,"caption":"黄昏，两只坐在最高的竹子上看夕阳，阿啾说：你一直都会飞，只是方式不一样。"}
+      ]
+    },
+    {
       "id": "owl",
       "title": "猫头鹰与松鼠的黄昏约定",
       "cover": "images/owl/p01.webp",
