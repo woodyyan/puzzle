@@ -1,6 +1,25 @@
 {
   "themes": [
     {
+      "id": "chameleon",
+      "title": "小变色龙的心情色",
+      "cover": "images/chameleon/p01.webp",
+      "pages": [
+        {"img":"images/chameleon/p01.webp","c":7,"r":7,"caption":"森林里住着一只小变色龙，它总变出奇怪的「错颜色」，同伴们看了都笑它。"},
+        {"img":"images/chameleon/p02.webp","c":7,"r":7,"caption":"它趴在绿叶上想变绿色，却变成了黄色；趴在石头上想变灰色，却变成了粉色。"},
+        {"img":"images/chameleon/p03.webp","c":7,"r":8,"caption":"小鹿笑它不会变色，松鼠说它是「彩虹味的」，小变色龙难过地变出了淡蓝色。"},
+        {"img":"images/chameleon/p04.webp","c":7,"r":8,"caption":"它躲到花丛后面想藏起来，可越躲身上越亮。"},
+        {"img":"images/chameleon/p05.webp","c":7,"r":9,"caption":"小兔子摔哭了，小变色龙担心地跑过去，身上变成暖暖的金黄色——小兔子看着金色，忽然不哭了。"},
+        {"img":"images/chameleon/p06.webp","c":7,"r":9,"caption":"原来它不是变错色，它是在变「心情的颜色」：开心金黄、害羞粉红、难过淡蓝、担心暖橙。"},
+        {"img":"images/chameleon/p07.webp","c":8,"r":10,"caption":"小变色龙鼓起勇气，把自己变成一个圆圆的黄色笑脸，向朋友们「解释」自己。"},
+        {"img":"images/chameleon/p08.webp","c":8,"r":10,"caption":"朋友们看懂了，一个个围上来，请它「翻译」自己的心情。"},
+        {"img":"images/chameleon/p09.webp","c":8,"r":11,"caption":"森林办起心情彩虹节：小鹿开心变金黄，松鼠想家变淡蓝，小兔害羞变粉红。"},
+        {"img":"images/chameleon/p10.webp","c":8,"r":11,"caption":"黄昏，森林挂满彩带灯笼，小变色龙站在最中间，把整片森林染成流动的颜色。"},
+        {"img":"images/chameleon/p11.webp","c":8,"r":12,"caption":"它的光芒像一道活的彩虹，洒在树上、花上、朋友们的身上。"},
+        {"img":"images/chameleon/p12.webp","c":9,"r":12,"caption":"从此没人再笑它，大家都学会看颜色、懂心情，小变色龙成了森林里最受欢迎的小家伙。"}
+      ]
+    },
+    {
       "id": "snail",
       "title": "小蜗牛上学",
       "cover": "images/snail/p01.webp",
