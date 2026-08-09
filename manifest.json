@@ -1,6 +1,25 @@
 {
   "themes": [
     {
+      "id": "snail",
+      "title": "小蜗牛上学",
+      "cover": "images/snail/p01.webp",
+      "pages": [
+        {"img":"images/snail/p01.webp","c":7,"r":7,"caption":"山谷学校开学了，小动物们背着书包往学校跑，只有小蜗牛还在山坡上慢慢爬。"},
+        {"img":"images/snail/p02.webp","c":7,"r":7,"caption":"小蜗牛背上小书包出发，它想，慢慢爬也没关系，只要不迟到。"},
+        {"img":"images/snail/p03.webp","c":7,"r":8,"caption":"路上遇到一队蚂蚁要过水坑，小蜗牛停下来，用自己的壳当小桥让它们爬过去。"},
+        {"img":"images/snail/p04.webp","c":7,"r":8,"caption":"一只蝴蝶被蛛网缠住，小蜗牛用触角一点一点帮它解开。"},
+        {"img":"images/snail/p05.webp","c":7,"r":9,"caption":"蜜蜂的花粉桶打翻了，小蜗牛帮它把花粉一粒一粒捡回桶里。"},
+        {"img":"images/snail/p06.webp","c":7,"r":9,"caption":"天色越来越暗，小蜗牛终于看见学校的屋顶，可同学们已经放学了。"},
+        {"img":"images/snail/p07.webp","c":8,"r":10,"caption":"教室里却亮着灯——同学们一个都没走，都在校门口等它。"},
+        {"img":"images/snail/p08.webp","c":8,"r":10,"caption":"原来班长早就数了人数，发现少了小蜗牛，全班决定一起等它来。"},
+        {"img":"images/snail/p09.webp","c":8,"r":11,"caption":"小蜗牛走进教室，同学们围过来，把今天学的功课一样样讲给它听。"},
+        {"img":"images/snail/p10.webp","c":8,"r":11,"caption":"老师把一朵小红花戴到它的壳上：你是最慢、也最暖的蜗牛。"},
+        {"img":"images/snail/p11.webp","c":8,"r":12,"caption":"黄昏，小蜗牛背着小红花爬出校门，同学们在校门口挥手送别它。"},
+        {"img":"images/snail/p12.webp","c":9,"r":12,"caption":"月亮升起来，小蜗牛背着小红花慢慢爬回家，它今天明白了：慢也有慢的好。"}
+      ]
+    },
+    {
       "id": "ant",
       "title": "蚂蚁与西瓜",
       "cover": "images/ant/p01.webp",
