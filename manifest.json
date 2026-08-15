@@ -1,6 +1,25 @@
 {
   "themes": [
     {
+      "id": "whale",
+      "title": "小女孩与彩虹鲸",
+      "cover": "images/whale/p01.webp",
+      "pages": [
+        {"img":"images/whale/p01.webp","c":7,"r":7,"caption":"海边渔村，小浪在码头帮爷爷收渔网，远远看见海面升起一道彩虹水柱。"},
+        {"img":"images/whale/p02.webp","c":7,"r":7,"caption":"第二天她又去了码头，发现是一头小鲸鱼在喷彩虹，它看到她就害羞地潜下水面。"},
+        {"img":"images/whale/p03.webp","c":7,"r":8,"caption":"小浪每天都来看它，给它带小贝壳，鲸鱼终于慢慢敢靠近她。"},
+        {"img":"images/whale/p04.webp","c":7,"r":8,"caption":"可有一天，渔民们说要抓走这头「彩虹鲸」，说它肚子里藏着宝藏。"},
+        {"img":"images/whale/p05.webp","c":7,"r":9,"caption":"小浪急坏了，张开手臂挡在码头前，说什么也不让船出海。"},
+        {"img":"images/whale/p06.webp","c":7,"r":9,"caption":"夜里，小浪偷偷跑回码头，鲸鱼正焦急地绕圈——它的脖子上紧紧勒着一圈旧渔网。"},
+        {"img":"images/whale/p07.webp","c":8,"r":10,"caption":"小浪仔细一看，那渔网是爷爷年轻时织的——原来爷爷救过它，鲸鱼是来报恩的。"},
+        {"img":"images/whale/p08.webp","c":8,"r":10,"caption":"小浪喊来爷爷，两人一起下水，小心地帮鲸鱼解开缠了很多年的旧渔网。"},
+        {"img":"images/whale/p09.webp","c":8,"r":11,"caption":"渔网解开的瞬间，鲸鱼喷出一道又大又亮的彩虹，整个渔村都看见了。"},
+        {"img":"images/whale/p10.webp","c":8,"r":11,"caption":"渔民们明白了：不是宝藏，是报恩的鲸鱼，大家都跑到码头来看它。"},
+        {"img":"images/whale/p11.webp","c":8,"r":12,"caption":"彩虹鲸驮着全村孩子游向大海深处，看海上日出，孩子们欢呼着拍手。"},
+        {"img":"images/whale/p12.webp","c":9,"r":12,"caption":"从此海边有了鲸鱼节，每年夏天彩虹鲸都会回来，小浪站在码头上朝它挥手。"}
+      ]
+    },
+    {
       "id": "starfox",
       "title": "小星狐的星球旅行",
       "cover": "images/starfox/p01.webp",
