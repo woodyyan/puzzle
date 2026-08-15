@@ -1,6 +1,25 @@
 {
   "themes": [
     {
+      "id": "hood",
+      "title": "小红帽与点心篮",
+      "cover": "images/hood/p01.webp",
+      "pages": [
+        {"img":"images/hood/p01.webp","c":7,"r":7,"caption":"清晨，小雅戴上红斗篷帽子，挎起满满一篮点心，要穿过森林去外婆家。"},
+        {"img":"images/hood/p02.webp","c":7,"r":7,"caption":"森林里阳光透过树叶，小雅边走边摘野花，篮子里飘出甜甜的香味。"},
+        {"img":"images/hood/p03.webp","c":7,"r":8,"caption":"她遇到小松鼠、小兔子、小鸟，分给它们几块点心，大家都开心极了。"},
+        {"img":"images/hood/p04.webp","c":7,"r":8,"caption":"这时，一只「大灰狼」从树后跳出来，拦住了她，直盯着她的点心篮。"},
+        {"img":"images/hood/p05.webp","c":7,"r":9,"caption":"小雅吓得抱紧篮子，一步步往后退，心想：外婆说的狼，真的来了。"},
+        {"img":"images/hood/p06.webp","c":7,"r":9,"caption":"可「大灰狼」没有扑上来，它蹲下来，用爪子笨拙地比划着，好像在解释什么。"},
+        {"img":"images/hood/p07.webp","c":8,"r":10,"caption":"原来那不是狼，是外婆家养的羊，戴着外婆织的狼形帽子，闻到点心香跑出来接她。"},
+        {"img":"images/hood/p08.webp","c":8,"r":10,"caption":"羊摘下帽子，露出白白的卷毛，还顶了顶小雅的篮子，想帮她拿点心。"},
+        {"img":"images/hood/p09.webp","c":8,"r":11,"caption":"小雅噗嗤一声笑了，和羊一起穿过森林，一路分点心给所有小动物。"},
+        {"img":"images/hood/p10.webp","c":8,"r":11,"caption":"外婆家的烟囱正冒着烟，外婆站在门口招手，羊在前面蹦蹦跳跳地带路。"},
+        {"img":"images/hood/p11.webp","c":8,"r":12,"caption":"外婆家开起点心会，羊戴着狼帽当「迎宾」，森林动物都来吃点心。"},
+        {"img":"images/hood/p12.webp","c":9,"r":12,"caption":"黄昏，篮子里装满了大家回赠的花和果子，外婆说：明天，羊还会来接你。"}
+      ]
+    },
+    {
       "id": "whale",
       "title": "小女孩与彩虹鲸",
       "cover": "images/whale/p01.webp",
