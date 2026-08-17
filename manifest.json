@@ -1,6 +1,25 @@
 {
   "themes": [
     {
+      "id": "raccoon",
+      "title": "小浣熊洗星星",
+      "cover": "images/raccoon/p01.webp",
+      "pages": [
+        {"img":"images/raccoon/p01.webp","c":7,"r":7,"caption":"河边住着一只爱洗东西的小浣熊，它洗果子、洗石头，什么都想洗一洗。"},
+        {"img":"images/raccoon/p02.webp","c":7,"r":7,"caption":"一天傍晚，阿浣发现河里有个东西一闪一闪，捞起来一看——是一颗小小的星星。"},
+        {"img":"images/raccoon/p03.webp","c":7,"r":8,"caption":"阿浣以为星星脏了，把它放进水里仔细地洗，可星星越洗越亮。"},
+        {"img":"images/raccoon/p04.webp","c":7,"r":8,"caption":"它把星星捞起来放在岸边，星星发出柔柔的光，阿浣开心得直转圈。"},
+        {"img":"images/raccoon/p05.webp","c":7,"r":9,"caption":"夜里，河里又亮起好多光点，阿浣一颗颗捞起来，全都是小星星。"},
+        {"img":"images/raccoon/p06.webp","c":7,"r":9,"caption":"阿浣抬头一看，天上的月亮缺了一块，像个被咬了一口的圆饼。"},
+        {"img":"images/raccoon/p07.webp","c":8,"r":10,"caption":"原来这些星星是月亮掉下来的碎片，月亮一直在等它们回家。"},
+        {"img":"images/raccoon/p08.webp","c":8,"r":10,"caption":"阿浣明白了，它把洗好的星星一颗颗小心地放回天上。"},
+        {"img":"images/raccoon/p09.webp","c":8,"r":11,"caption":"星星自己飘向夜空，一颗颗重新镶回月亮缺掉的地方。"},
+        {"img":"images/raccoon/p10.webp","c":8,"r":11,"caption":"月亮一点点变圆，阿浣和河边的小动物们仰着头看呆了。"},
+        {"img":"images/raccoon/p11.webp","c":8,"r":12,"caption":"最后一颗星星放回去，月亮圆了，整条河都亮起星光的倒影。"},
+        {"img":"images/raccoon/p12.webp","c":9,"r":12,"caption":"从此阿浣知道：星星本来就会发光，不用洗也亮；月亮每晚都朝它眨眼睛。"}
+      ]
+    },
+    {
       "id": "hood",
       "title": "小红帽与点心篮",
       "cover": "images/hood/p01.webp",
