@@ -1,6 +1,25 @@
 {
   "themes": [
     {
+      "id": "moonclock",
+      "title": "月光星灯塔谜案",
+      "cover": "images/moonclock/p01.webp",
+      "pages": [
+        {"img":"images/moonclock/p01.webp","c":7,"r":7,"caption":"月光镇的星灯塔忽然熄灭，小狐狸侦探阿寻在塔下发现了闪烁的星尘。"},
+        {"img":"images/moonclock/p02.webp","c":7,"r":7,"caption":"阿寻跟着星尘走进塔内，彩色齿轮间藏着一片蓝色水晶碎屑。"},
+        {"img":"images/moonclock/p03.webp","c":7,"r":8,"caption":"星尘穿过悬空花园的小巷，在一扇半开的圆门前消失了。"},
+        {"img":"images/moonclock/p04.webp","c":7,"r":8,"caption":"运河石桥上留着一枚小小的脚印，远处似乎有谁正匆匆离开。"},
+        {"img":"images/moonclock/p05.webp","c":7,"r":9,"caption":"一扇巨大的齿轮门转开，阿寻追进布满管道和晶灯的秘密通道。"},
+        {"img":"images/moonclock/p06.webp","c":7,"r":9,"caption":"地下观测室里，星形灯座空空如也，萤火虫般的光点指向更深处。"},
+        {"img":"images/moonclock/p07.webp","c":8,"r":10,"caption":"阿寻钻过彩色管道隧道，尽头的圆舱门后透出温柔星光。"},
+        {"img":"images/moonclock/p08.webp","c":8,"r":10,"caption":"屋顶温室里，失踪的星灯躺在藤蔓鸟巢中，小睡鼠修理师紧张地守在旁边。"},
+        {"img":"images/moonclock/p09.webp","c":8,"r":11,"caption":"真相揭开：星灯不是被偷走，它被借来为一窝迷路的小萤火虫取暖。"},
+        {"img":"images/moonclock/p10.webp","c":8,"r":11,"caption":"阿寻和小睡鼠一起修好星灯，让它重新发出明亮温暖的光。"},
+        {"img":"images/moonclock/p11.webp","c":8,"r":12,"caption":"他们带着修好的星灯登上螺旋塔梯，萤火虫们在身后排成发光的队伍。"},
+        {"img":"images/moonclock/p12.webp","c":9,"r":12,"caption":"星灯再度照亮月光镇，迷路的小萤火虫找到方向，阿寻也找到了谜题的答案。"}
+      ]
+    },
+    {
       "id": "paintbrush",
       "title": "失踪的画笔",
       "cover": "images/paintbrush/p01.webp",
